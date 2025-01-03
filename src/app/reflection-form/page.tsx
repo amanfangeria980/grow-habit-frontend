@@ -49,13 +49,31 @@ const ReflectionForm = () => {
     },
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async(data: FormValues) => {
+    console.log("This is the data ", data)
+
+   
+    try{
+
+
+    const response = await fetch('http://localhost:5173/reflect', {method : "POST", headers : {'Content-Type': "application/json"}, body : JSON.stringify(data)})
+    const repData = await response.json() ; 
+    console.log("message from server : ",repData.message)
     console.log("Form Data:", data);
+
+
+    }
+    catch(error)
+    {
+      console.log("There is an error at fetching data at reflection form", error)
+    }
+    
   };
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="m-3">
       {/* Header */}
+      
       <div className="flex flex-col gap-2">
         <h5 className="text-lg">Reflection Status</h5>
         <p className="text-xs font-extralight">
@@ -74,6 +92,7 @@ const ReflectionForm = () => {
             <SelectContent className="bg-white">
               <SelectItem value="parth">Parth</SelectItem>
               <SelectItem value="aman">Aman</SelectItem>
+              
             </SelectContent>
           </Select>
           {form.formState.errors.name && (
