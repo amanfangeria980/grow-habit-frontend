@@ -28,16 +28,25 @@ const formSchema = z.object({
   date: z.date({
     required_error: "Please select a date",
   }),
+  day : z.number({
+    required_error : "Please tell the day"
+  }),
   comradeConnection: z.string().min(1, "Please select your connection type"),
   cuePerformance: z.enum(["yes", "no"], {
     required_error: "Please select yes or no",
   }),
   reflection: z.string().min(1, "Please enter your reflection"),
+  timestamp : z.date({
+    required_error : "Please give the exact date and time of filling the form"
+  }),
+  testDay : z.number()
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 const ReflectionForm = () => {
+  const today = new Date() ; 
+  const dayOfMonth = today.getDate() ; 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,6 +55,8 @@ const ReflectionForm = () => {
       comradeConnection: "",
       cuePerformance: "no",
       reflection: "",
+      day : dayOfMonth, 
+      timestamp : today
     },
   });
 
@@ -157,7 +168,14 @@ const ReflectionForm = () => {
               <Calendar
                 mode="single"
                 selected={form.watch("date")}
-                onSelect={(date) => date && form.setValue("date", date)}
+                onSelect={(date) => {
+                  if(date)
+                  {
+                    form.setValue("date", date)
+                    form.setValue("testDay", date.getDate())
+                    console.log(date.getDate())
+                  }
+                }}
                 initialFocus
               />
             </PopoverContent>
