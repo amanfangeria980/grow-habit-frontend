@@ -75,7 +75,7 @@ const Page = () => {
                 status: status,
             };
 
-            setFinStatus((prevFinStatus) => [...prevFinStatus, pushValue]);
+            setFinStatus((prevFinStatus: any) => [...prevFinStatus, pushValue]);
         } else {
             console.log(repData.message);
         }
