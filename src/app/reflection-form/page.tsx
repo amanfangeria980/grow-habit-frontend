@@ -68,7 +68,7 @@ const ReflectionForm = () => {
     try{
 
 
-    const response = await fetch('http://localhost:5173/reflect', {method : "POST", headers : {'Content-Type': "application/json"}, body : JSON.stringify(data)})
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reflect`, {method : "POST", headers : {'Content-Type': "application/json"}, body : JSON.stringify(data)})
     const repData = await response.json() ; 
     console.log("message from server : ",repData.message)
     console.log("Form Data:", data);

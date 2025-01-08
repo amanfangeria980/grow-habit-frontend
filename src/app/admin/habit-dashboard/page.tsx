@@ -91,25 +91,36 @@ export default function Page(){
             }
 
             <div>
-                <h2>This is a table</h2>
-                <table className="border-2 border-black">
+
+
+           
+
+            <table className="border-2 border-black">
                     <thead>
                         <tr>
                             <th className="border-2 border-black px-2">Day</th>
-                            {
-                                users.map((user : any)=>{
-                                    return(
-                                        <th key={user} className="border-2 border-black px-2">
-                                            {user}
-                                        </th>
-                                    )
-                                })
-                            }
+                            {users.map((user: any) => (
+                                <th key={user} className="border-2 border-black px-2">
+                                    {user}
+                                </th>
+                            ))}
                         </tr>
-
                     </thead>
+                    <tbody>
+                        {uniDays.map((day: any) => (
+                            <tr key={day}>
+                                <TdComp>{day}</TdComp>
+                                {users.map((user: any) => (
+                                    <TdComp key={`${day}-${user}`}>
+                                        {dataMatrix[day][user]}
+                                    </TdComp>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
-            </div>
+
+                </div>
         
         
         

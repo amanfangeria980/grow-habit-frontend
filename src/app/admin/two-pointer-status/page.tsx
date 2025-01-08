@@ -25,7 +25,7 @@ const Page = ()=>{
             day : day
     
         }
-        const response = await fetch('http://localhost:5173/get-two-pointer-status', {method : "POST", headers : {'Content-Type' : 'application/json'}, body : JSON.stringify(sendData)})
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get-two-pointer-status`, {method : "POST", headers : {'Content-Type' : 'application/json'}, body : JSON.stringify(sendData)})
         const repData = await response.json()
         console.log("The message from the backend ", repData)
         const results = repData.results ; 
