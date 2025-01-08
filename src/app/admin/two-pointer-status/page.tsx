@@ -9,6 +9,7 @@
 "use client"
 
 import { useState } from "react"
+import { usersAll } from "@/lib/data"
 const Page = ()=>{
 
     const [day, setDay] = useState<string>("")
@@ -18,24 +19,39 @@ const Page = ()=>{
 
 
 
-    const fetchTwoPointerStatus = async()=>{
+    const fetchTwoPointerStatus = async(username : string , day : number)=>{
 
         const sendData = {
 
-            username : "parth",
-            day : parseInt(day,10)
+            username : username,
+            day : day
     
         }
         const response = await fetch('http://localhost:5173/get-two-pointer-status', {method : "POST", headers : {'Content-Type' : 'application/json'}, body : JSON.stringify(sendData)})
         const repData = await response.json()
         console.log("The message from the backend ", repData)
         const results = repData.results ; 
-        if(results)
-        {
-            const {dayYesterday, dayBeforeYesterday} = repData.data ; 
 
-            console.log("The value of dayYesterday is ", dayYesterday) ; 
-            console.log("The value of dayBeforeYesterday is ", dayBeforeYesterday)
+        // console.log("Rep data value is for user", username,"is", repData)
+
+        // console.log("The results boolean value is ", results)
+        // console.log("The message from backend is ", repData.message)
+      
+            let {dayYesterday, dayBeforeYesterday} = repData.data ; 
+
+            
+
+            if(dayYesterday === "")
+            {
+                dayYesterday = "no"
+            }
+            if(dayBeforeYesterday === "")
+            {
+                dayBeforeYesterday = "no"
+            }
+
+            // console.log("The value of dayYesterday is ", dayYesterday) ; 
+            // console.log("The value of dayBeforeYesterday is ", dayBeforeYesterday)
 
             const checkStatus = (dayYesterday : String, dayBeforeYesterday : String)=>{
                 let status = ""
@@ -64,24 +80,56 @@ const Page = ()=>{
             const status = checkStatus(dayYesterday, dayBeforeYesterday)
 
             let pushValue = {
-                username : "parth", 
+                username : username, 
                 status : status
             }
 
-            setFinStatus((prevFinStatus)=>[...prevFinStatus,pushValue])
+            let localFlag = true ; 
+
+            finStatus.map((status : any)=>{
+
+                if(status.username === username)
+                {
+                    localFlag = false ; 
+                }
+
+            })
+
+            if(localFlag)
+            {
+
+                setFinStatus((prevFinStatus : any)=>[...prevFinStatus,pushValue])
+
+            }
+
+            
            
             
 
-        }
-        else
-        {
-            console.log(repData.message)
-        }
+       
+      
         
 
         
         
     }
+
+    const calculateTwoPointer = (day : number)=>{
+
+        setFinStatus([])
+        console.log("This is the value before", finStatus)
+
+        usersAll.map((user)=>{
+            fetchTwoPointerStatus(user,day)
+        })
+
+        console.log("This is the value afterwards", finStatus)
+
+        
+
+    }
+
+
     return(
         <>
             <div>This is the admin page for generating 2 pointer status </div>
@@ -93,7 +141,7 @@ const Page = ()=>{
             
             <div>
                 <input type="number" className="border-2 border-black bg-gray" min={1} max={25} value={day} onChange={(e)=> setDay(e.target.value)} />
-                <button onClick={fetchTwoPointerStatus} className="border-2 border-black bg-gray-200 disabled:bg-red-400" disabled={!day || isNaN(parseInt(day, 10))}>Generate two pointer status </button>
+                <button onClick={()=>{calculateTwoPointer(parseInt(day,10))}} className="border-2 border-black bg-gray-200 disabled:bg-red-400" disabled={!day || isNaN(parseInt(day, 10))}>Generate two pointer status </button>
 
             </div>
 
@@ -102,6 +150,18 @@ const Page = ()=>{
                 {
                     JSON.stringify(finStatus)
                 }
+
+                <h2>Two Pointer Status for {day}</h2>
+
+                {finStatus.map((status : any)=>{
+                    return(
+
+                        <div key={status.username}>
+                            {status.username} : {status.status}
+                        </div>
+
+                    )
+                })}
             </div>
         
         

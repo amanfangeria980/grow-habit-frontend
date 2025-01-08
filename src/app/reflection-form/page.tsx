@@ -21,6 +21,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usersAll } from "@/lib/data";
 
 const formSchema = z.object({
   name: z.string().min(1, "Please select your name"),
@@ -101,8 +102,19 @@ const ReflectionForm = () => {
               <SelectValue placeholder="Name" className="text-text-100" />
             </SelectTrigger>
             <SelectContent className="bg-white">
-              <SelectItem value="parth">Parth</SelectItem>
-              <SelectItem value="aman">Aman</SelectItem>
+
+
+              {
+                usersAll.map((user, index)=>{
+                  return(
+                    <SelectItem key={Number(index)} value={user}>{user}</SelectItem>
+                  )
+                })
+              }
+
+            
+              {/* <SelectItem value="parth">Parth</SelectItem>
+              <SelectItem value="aman">Aman</SelectItem> */}
               
             </SelectContent>
           </Select>
