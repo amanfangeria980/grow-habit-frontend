@@ -1,12 +1,10 @@
-
-// Steps to perform : 
-// 1. find today's date 
-// 2. Pull the data of the past two days 
+// Steps to perform :
+// 1. find today's date
+// 2. Pull the data of the past two days
 // 3. Use logic .ts to create the two pointer status
 
-
-// Next action => Check Status 
-"use client"
+// Next action => Check Status
+"use client";
 
 import { useState } from "react"
 import { usersAll } from "@/lib/data"
@@ -53,31 +51,38 @@ const Page = ()=>{
             // console.log("The value of dayYesterday is ", dayYesterday) ; 
             // console.log("The value of dayBeforeYesterday is ", dayBeforeYesterday)
 
-            const checkStatus = (dayYesterday : String, dayBeforeYesterday : String)=>{
-                let status = ""
+            const checkStatus = (
+                dayYesterday: String,
+                dayBeforeYesterday: String
+            ) => {
+                let status = "";
 
-                if( dayYesterday === 'gateway' && dayBeforeYesterday === 'gateway')
-                {
-                    status = "duck"
-                }
-                else if(dayYesterday === 'gateway' && dayBeforeYesterday === 'no')
-                {
-                    status = "duck"
-                }
-                else if(dayYesterday === 'no' && dayBeforeYesterday === 'gateway')
-                {
-                    status = "crab"
-                }
-                else if(dayYesterday === 'no' && dayBeforeYesterday === 'no')
-                {
-                    status = "cross"
+                if (
+                    dayYesterday === "gateway" &&
+                    dayBeforeYesterday === "gateway"
+                ) {
+                    status = "duck";
+                } else if (
+                    dayYesterday === "gateway" &&
+                    dayBeforeYesterday === "no"
+                ) {
+                    status = "duck";
+                } else if (
+                    dayYesterday === "no" &&
+                    dayBeforeYesterday === "gateway"
+                ) {
+                    status = "crab";
+                } else if (
+                    dayYesterday === "no" &&
+                    dayBeforeYesterday === "no"
+                ) {
+                    status = "cross";
                 }
 
-                return status 
+                return status;
+            };
 
-            }
-
-            const status = checkStatus(dayYesterday, dayBeforeYesterday)
+            const status = checkStatus(dayYesterday, dayBeforeYesterday);
 
             let pushValue = {
                 username : username, 
@@ -135,10 +140,9 @@ const Page = ()=>{
             <div>This is the admin page for generating 2 pointer status </div>
             <div>
                 <h2>Date : </h2>
-                
             </div>
             {day}
-            
+
             <div>
                 <input type="number" className="border-2 border-black bg-gray" min={1} max={25} value={day} onChange={(e)=> setDay(e.target.value)} />
                 <button onClick={()=>{calculateTwoPointer(parseInt(day,10))}} className="border-2 border-black bg-gray-200 disabled:bg-red-400" disabled={!day || isNaN(parseInt(day, 10))}>Generate two pointer status </button>
@@ -163,10 +167,8 @@ const Page = ()=>{
                     )
                 })}
             </div>
-        
-        
         </>
-    )
-}
+    );
+};
 
-export default Page 
+export default Page;
