@@ -12,6 +12,26 @@ const Page = () => {
     const [day, setDay] = useState<string>("");
     const [finStatus, setFinStatus] = useState<any>([]);
 
+    const sendWhatsappMessage = async () => {
+        const phoneNumbers = 917078609133;
+        // const phoneNumbers = 919801801777;
+        if (finStatus.length === 0) {
+            alert("Please generate the two pointer status first");
+            return;
+        } else {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/send-whatsapp-message`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ phoneNumbers, finStatus }),
+                }
+            );
+            const repData = await response.json();
+            console.log("whatsapp message sent succesfully ", repData);
+        }
+    };
+
     const fetchTwoPointerStatus = async (username: string, day: number) => {
         const sendData = {
             username: username,
@@ -130,6 +150,13 @@ const Page = () => {
                     disabled={!day || isNaN(parseInt(day, 10))}
                 >
                     Generate two pointer status{" "}
+                </button>
+                <button
+                    onClick={() => {
+                        sendWhatsappMessage();
+                    }}
+                >
+                    Send Whatsapp Message
                 </button>
             </div>
 
