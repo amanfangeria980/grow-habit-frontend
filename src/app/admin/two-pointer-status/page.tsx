@@ -13,14 +13,14 @@ const Page = () => {
     const [finStatus, setFinStatus] = useState<any>([]);
 
     const sendWhatsappMessage = async () => {
-        const phoneNumbers = 917078609133;
-        // const phoneNumbers = 919801801777;
+        // const phoneNumbers = 917078609133;
+        const phoneNumbers = process.env.NEXT_PUBLIC_PHONE_NUMBER;
         if (finStatus.length === 0) {
             alert("Please generate the two pointer status first");
             return;
         } else {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/send-whatsapp-message`,
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/whatsapp/send-text-message`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -38,7 +38,7 @@ const Page = () => {
             day: day,
         };
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/get-two-pointer-status`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/get-two-pointer-status`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

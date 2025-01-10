@@ -10,7 +10,7 @@ export default function Page() {
 
     const updateReflections = async () => {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/get-reflections`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/get-reflections`
         );
         const repData = await response.json();
         console.log("This is what I fetched from the backend ", repData);
