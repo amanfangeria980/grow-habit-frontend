@@ -8,7 +8,7 @@ interface Reflections {}
 export default function Page() {
     const [reflections, setReflections] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [editFlag, setEditFlag] = useState<boolean>(true) ; 
+    const [editFlag, setEditFlag] = useState<boolean>(false) ; 
 
     const updateReflections = async () => {
         const response = await fetch(
