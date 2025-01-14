@@ -1,70 +1,100 @@
-"use client"
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-
+"use client";
+import { useState, useEffect } from "react";
+import { usersAll } from "@/lib/data";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 export default function UserHome() {
+    const [selectedName, setSelectedName] = useState<string>("parth");
+    const [recordsArray, setRecordsArray] = useState<
+        Array<{ value: string; day: number }>
+    >([]);
+    const [loading, setLoading] = useState(true);
+    const today = new Date().getDate();
 
-    const [recordsArray, setRecordsArray] = useState<any>([])
-    // const [username, setUsername] = useState<string | null>(null)
-    const searchParams = useSearchParams() ; 
-    const usernameFromURL = searchParams.get('username')
-   ;
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${selectedName}`
+                );
+                const data = await response.json();
+                if (data.success) {
+                    setRecordsArray(data.data);
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
+        fetchUserData();
+    }, [selectedName]);
 
-
-
-
-    const getReflections = async()=>{
-
-        const username = usernameFromURL ; 
-
-
-        try{
-
-
-    
-        
-        
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-user-reflections?username=${username}`, {method : "GET"})
-        // const repData = await response.json() ; 
-        // console.log("this is repData fetched from backend ", repData )
-
-        }
-        catch(error)
-        {
-            console.log("the error at getReflections is ", error)
-        }
-
+    if (loading) {
+        return <div>Loading...</div>;
     }
 
-    useEffect(()=>{
-        const usingEffect = async()=>{
-            await getReflections()
-        }
-
-        usingEffect() ; 
-    },[usernameFromURL])
     return (
         <>
             <div className="p-4 bg-gray-100 min-h-screen">
-                <div className="text-center mb-4">
-                    <h1 className="text-xl font-semibold">Hi, Parth</h1>
-                    <p className="text-gray-600 mt-2">Your two-pointer status for today is:</p>
+                <div className="mb-6">
+                    <Select
+                        value={selectedName}
+                        onValueChange={(value) => setSelectedName(value)}
+                    >
+                        <SelectTrigger className="w-full bg-white rounded-lg py-3 px-4 text-left text-gray-600 flex justify-between items-center shadow-xl h-12">
+                            <SelectValue placeholder="Select name" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white">
+                            {usersAll.map((user, index) => (
+                                <SelectItem key={index} value={user}>
+                                    {user}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
 
-                <div className="grid grid-cols-7 gap-[0.1px] justify-center">
-                    {recordsArray.map((item : any) => (
-                        <div key={item.day} className="flex flex-col items-center">
+                <div className="text-center mb-4">
+                    <h1 className="text-xl font-semibold">
+                        Hi, {selectedName}
+                    </h1>
+                    <p className="text-gray-600 mt-2">
+                        Your two-pointer status for today is:
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-5 gap-4 justify-center max-w-3xl mx-auto">
+                    {recordsArray.map((item) => (
+                        <div
+                            key={item.day}
+                            className="flex flex-col items-center p-2"
+                        >
                             <div
-                                className={`w-5 h-5 ${
-                                    item.value === "yes"
+                                className={`w-8 h-8 rounded-md ${
+                                    item.day >= today
+                                        ? "bg-slate-200 border-slate-300"
+                                        : item.value === "no"
+                                        ? "bg-red-300 border-red-400"
+                                        : item.value === "gateway"
+                                        ? "bg-yellow-300 border-yellow-400"
+                                        : item.value === "plus"
                                         ? "bg-green-300 border-green-400"
+                                        : item.value === "elite"
+                                        ? "bg-green-600 border-green-700"
                                         : "bg-red-300 border-red-400"
                                 } border-2`}
                             ></div>
-                            <p className="mt-2 text-sm font-medium text-gray-700">Day {item.day}</p>
+                            <p className="mt-2 text-xs font-medium text-gray-700">
+                                Day {item.day}
+                            </p>
                         </div>
                     ))}
                 </div>
@@ -86,8 +116,6 @@ export default function UserHome() {
                         <p>Frequent connection with commrade pair </p>
                         <p> Constantly Updating your plus statement </p>
                     </div>
-
-
                 </div>
             </div>
         </>
