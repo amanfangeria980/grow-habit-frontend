@@ -6,10 +6,10 @@ const HomePage = () => {
             <div className="bg-gray-50 min-h-screen">
                 <div className="min-h-screen bg-orange-500 text-white flex flex-col items-center justify-center px-2">
                     <h2 className="text-3xl mb-4 font-bold hover:text-black transition-all duration-300">
-                        Better State of Mind for More People{" "}
+                        Better State of Mind for More People
                     </h2>
                     <h3 className="text-2xl mb-6 hover:text-black transition-all duration-300">
-                        Build better habits for a better life{" "}
+                        Build better habits for a better life
                     </h3>
                     <button className="bg-white rounded-full px-6 py-2 text-blue-500 hover:bg-blue-600 hover:text-white transition-all duration-300 ">
                         Get Started
@@ -66,8 +66,7 @@ const HomePage = () => {
                         Ready to Build Better Habits ?
                     </h2>
                     <button className="bg-white text-blue-600 rounded-full px-6 py-2 ">
-                        {" "}
-                        Join Now{" "}
+                        Join Now
                     </button>
                 </div>
             </div>
