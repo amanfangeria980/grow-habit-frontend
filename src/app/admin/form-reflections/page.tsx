@@ -18,6 +18,40 @@ export default function Page() {
     const [error, setError] = useState<string | null>(null);
     const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
 
+    const formatTimestamp = (timestamp: string) => {
+        const date = new Date(timestamp);
+
+        // Get day with ordinal suffix
+        const day = date.getDate();
+        const ordinal = (day: number) => {
+            if (day > 3 && day < 21) return "th";
+            switch (day % 10) {
+                case 1:
+                    return "st";
+                case 2:
+                    return "nd";
+                case 3:
+                    return "rd";
+                default:
+                    return "th";
+            }
+        };
+
+        // Format the date parts
+        const formattedDate = `${day}${ordinal(day)} ${date.toLocaleString(
+            "en-US",
+            { month: "short" }
+        )}, ${date.getFullYear()}`;
+        const formattedTime = date.toLocaleString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+        });
+
+        return `${formattedDate} | ${formattedTime}`;
+    };
+
     const updateReflections = async () => {
         try {
             const response = await fetch(
@@ -110,7 +144,9 @@ export default function Page() {
                     <tbody>
                         {reflections.map((ref) => (
                             <tr key={ref.id}>
-                                <TdComp>{ref.timestamp}</TdComp>
+                                <TdComp>
+                                    {formatTimestamp(ref.timestamp)}
+                                </TdComp>
                                 <TdComp>{ref.name}</TdComp>
                                 <TdComp>{ref.day}</TdComp>
                                 <TdComp>{ref.commitment}</TdComp>
