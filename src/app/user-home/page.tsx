@@ -1,34 +1,51 @@
-
+"use client"
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 
 export default function UserHome() {
-    const recordsArray = [
-        { value: "yes", day: 1 },
-        { value: "no", day: 2 },
-        { value: "yes", day: 3 },
-        { value: "no", day: 4 },
-        { value: "yes", day: 5 },
-        { value: "no", day: 6 },
-        { value: "yes", day: 7 },
-        { value: "no", day: 8 },
-        { value: "yes", day: 9 },
-        { value: "no", day: 10 },
-        { value: "yes", day: 11 },
-        { value: "no", day: 12 },
-        { value: "yes", day: 13 },
-        { value: "no", day: 14 },
-        { value: "yes", day: 15 },
-        { value: "no", day: 16 },
-        { value: "yes", day: 17 },
-        { value: "no", day: 18 },
-        { value: "yes", day: 19 },
-        { value: "no", day: 20 },
-        { value: "yes", day: 21 },
-        { value: "no", day: 22 },
-        { value: "yes", day: 23 },
-        { value: "no", day: 24 },
-        { value: "yes", day: 25 }
-    ];
+
+    const [recordsArray, setRecordsArray] = useState<any>([])
+    // const [username, setUsername] = useState<string | null>(null)
+    const searchParams = useSearchParams() ; 
+    const usernameFromURL = searchParams.get('username')
+   ;
+
+
+
+
+
+    const getReflections = async()=>{
+
+        const username = usernameFromURL ; 
+
+
+        try{
+
+
+    
+        
+        
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-user-reflections?username=${username}`, {method : "GET"})
+        // const repData = await response.json() ; 
+        // console.log("this is repData fetched from backend ", repData )
+
+        }
+        catch(error)
+        {
+            console.log("the error at getReflections is ", error)
+        }
+
+    }
+
+    useEffect(()=>{
+        const usingEffect = async()=>{
+            await getReflections()
+        }
+
+        usingEffect() ; 
+    },[usernameFromURL])
     return (
         <>
             <div className="p-4 bg-gray-100 min-h-screen">
@@ -38,7 +55,7 @@ export default function UserHome() {
                 </div>
 
                 <div className="grid grid-cols-7 gap-[0.1px] justify-center">
-                    {recordsArray.map((item) => (
+                    {recordsArray.map((item : any) => (
                         <div key={item.day} className="flex flex-col items-center">
                             <div
                                 className={`w-5 h-5 ${

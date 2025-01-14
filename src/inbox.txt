@@ -1,0 +1,5 @@
+What are the things I need to do ? 
+
+=> I need to work on the edit button 
+=> I need to write the personal dashboard question. 
+=> I need to add the authentication 

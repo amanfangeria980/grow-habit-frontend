@@ -8,7 +8,9 @@ interface Reflections {}
 export default function Page() {
     const [reflections, setReflections] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [editFlag, setEditFlag] = useState<boolean>(false) ; 
+    const [editFlag, setEditFlag] = useState<String | null>(null) ; 
+    const [editDayValue, setEditDayValue] = useState<string | number | readonly string[] | undefined>("")
+    const [errorFlag, setErrorFlag] = useState<string | null>(null) ; 
 
     const updateReflections = async () => {
         const response = await fetch(
@@ -18,6 +20,44 @@ export default function Page() {
         console.log("This is what I fetched from the backend ", repData);
         setReflections(repData.data);
     };
+
+    const handleEdit = (ref : any)=>{
+        setEditDayValue(ref.testDay)
+        setEditFlag(ref.id) ; 
+        
+
+    
+    }
+
+    const handleSave = async(ref : any)=>{
+        setEditFlag(null)
+        if(typeof(editDayValue) === "string")
+        {
+            const trimmedValue = editDayValue.trim().replace(/\s+/g, ' ');
+            const value = Number(trimmedValue)
+
+            const sendData = {
+
+                 updatedDay : value,
+                 reflectionData : ref 
+                 
+            }
+            
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/update-reflection`, {method : "POST", headers : {'Content-Type' : 'application/json'}, body : JSON.stringify(sendData)})
+            const repData = await response.json() ; 
+            
+            console.log("The data from the backend is ", repData) 
+
+            if(!repData.success)
+                {
+                    setErrorFlag(repData.message) ; 
+                }
+
+        }
+        
+        
+    }
 
     const handleDelete = async(ref : any)=>{
 
@@ -60,8 +100,10 @@ export default function Page() {
     return (
         <>
             <div>This is the form reflections page </div>
+            {editFlag ? editFlag : "there is no value"}
 
             <div>
+               
                 <table className="border-2 border-black">
                     <thead>
                         <tr>
@@ -77,7 +119,8 @@ export default function Page() {
                             <th className="border-2 border-black px-2 ">
                                 testDay
                             </th>
-                            <th>Delete</th>
+                            <th className="border-2 border-black px-2 ">Delete</th>
+                            <th className="border-2 border-black px-2 ">Edit</th>
                         </tr>
                     </thead>
 
@@ -97,11 +140,16 @@ export default function Page() {
                                     <TdComp>{ref.name}</TdComp>
                                     <TdComp>{ref.day}</TdComp>
                                     <TdComp>{ref.commitment}</TdComp>
-                                    <TdComp classname="">{ editFlag ? <div><input type="text" className="px-2 border-2 border-black rounded-md" /></div> : ref.testDay}</TdComp>
+                                    <TdComp classname="">{ editFlag === ref.id ? <div><input type="text" className="px-2 border-2 border-black rounded-md" value={editDayValue} onChange={(e)=>{setEditDayValue(e.target.value)}}   /></div> : ref.testDay}</TdComp>
                                   
                                    
                                     <TdComp classname=""><button className="bg-black text-white rounded-md m-1 p-1" onClick={()=>{handleDelete(ref)}}>Delete</button></TdComp>
-                                    <TdComp classname="bg-black text-white rounded-md m-1 p-1">Edit</TdComp>
+                                    <TdComp classname=""> { editFlag === ref.id ? <button className="bg-black text-white rounded-md m-1 p-1 px-2" onClick={()=>{handleSave(ref)}}> Save </button> :  <button className="bg-black text-white rounded-md m-1 p-1 px-2" onClick={()=>{handleEdit(ref)}}>Edit</button> 
+
+                                        
+                                    
+                                    
+                                    } </TdComp>
                                     
                                 </tr>
 
@@ -116,6 +164,19 @@ export default function Page() {
                     </tbody>
                 </table>
             </div>
+            {
+                errorFlag && <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white rounded-md shadow-lg p-6 text-center flex flex-col gap-2">
+                        <h2 className="text-red-600 font-semibold">Error</h2>
+                        {
+
+                            errorFlag
+
+                        }
+                        <button className="p-2 bg-black rounded-md text-white" onClick={()=>{setErrorFlag(null)}}>Close</button>
+                    </div>
+                </div>
+            }
         </>
     );
 }
