@@ -79,7 +79,7 @@ export default function UserHome() {
                         >
                             <div
                                 className={`w-8 h-8 rounded-md ${
-                                    item.day > today
+                                    item.day >= today
                                         ? "bg-slate-200 border-slate-300"
                                         : item.value === "no"
                                         ? "bg-red-300 border-red-400"
