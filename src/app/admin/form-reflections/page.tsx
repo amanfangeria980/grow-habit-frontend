@@ -2,117 +2,143 @@
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 
-// To do : define the interface reflections
-interface Reflections {}
+interface Reflection {
+    id: string;
+    timestamp: string;
+    name: string;
+    day: number;
+    commitment: string;
+    testDay: number;
+}
 
 export default function Page() {
-    const [reflections, setReflections] = useState<any>([]);
+    const [reflections, setReflections] = useState<Reflection[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [editFlag, setEditFlag] = useState<boolean>(false) ; 
+    const [editFlag, setEditFlag] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
 
     const updateReflections = async () => {
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/get-reflections`
-        );
-        const repData = await response.json();
-        console.log("This is what I fetched from the backend ", repData);
-        setReflections(repData.data);
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/get-reflections`
+            );
+            if (!response.ok) {
+                throw new Error("Failed to fetch reflections");
+            }
+            const repData = await response.json();
+            setReflections(repData.data);
+        } catch (error) {
+            setError("Failed to fetch reflections");
+            console.error("Error fetching reflections:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleDelete = async(ref : any)=>{
-
-        console.log("This is the value of ref from delete button ", ref)
-
-
-        const sendData = {
-
-            data  : ref 
-        
+    const handleDelete = async (ref: Reflection) => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/delete-reflection`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ data: ref }),
+                }
+            );
+            if (!response.ok) {
+                throw new Error("Failed to delete reflection");
+            }
+            const repData = await response.json();
+            setDeleteMessage(repData.message);
+            // Refresh reflections after successful delete
+            updateReflections();
+        } catch (error) {
+            setError("Failed to delete reflection");
+            console.error("Error deleting reflection:", error);
         }
-
-         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/delete-reflection`, { method : "POST", headers : {'Content-Type' : "application/json"}, body : JSON.stringify(sendData)})
-         const repData = await response.json() ; 
-         console.log("The data from the backend ( delete-reflections ) is ", repData)
-
-    }
+    };
 
     useEffect(() => {
-        const useFunction = async () => {
-            await updateReflections();
-        };
-
-        useFunction();
+        updateReflections();
     }, []);
 
-    useEffect(() => {
-        console.log(reflections);
-    }, [reflections]);
-
-    useEffect(()=>{
-
-
-    })
-
-    const TdComp = ({ children, classname }: { children: any , classname?: string}) => {
-        return <td className={clsx("border-2 border-black px-2",classname)}>{children}</td>;
+    const TdComp = ({
+        children,
+        classname,
+    }: {
+        children: React.ReactNode;
+        classname?: string;
+    }) => {
+        return (
+            <td className={clsx("border-2 border-black px-2", classname)}>
+                {children}
+            </td>
+        );
     };
+
+    if (loading) {
+        return <div>Loading reflections...</div>;
+    }
+
+    if (error) {
+        return <div className="text-red-500">Error: {error}</div>;
+    }
 
     return (
         <>
-            <div>This is the form reflections page </div>
-
+            <div>This is the form reflections page</div>
             <div>
                 <table className="border-2 border-black">
                     <thead>
                         <tr>
                             <th className="border-2 border-black px-2">
-                                {" "}
-                                Timestamp{" "}
+                                Timestamp
                             </th>
                             <th className="border-2 border-black px-2">Name</th>
-                            <th className="border-2 border-black px-2">day</th>
+                            <th className="border-2 border-black px-2">Day</th>
                             <th className="border-2 border-black px-2">
-                                commitment
+                                Commitment
                             </th>
-                            <th className="border-2 border-black px-2 ">
-                                testDay
+                            <th className="border-2 border-black px-2">
+                                Test Day
                             </th>
                             <th>Delete</th>
+                            <th>Edit</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                        {reflections.map((ref: any) => {
-                            return (
-
-                              
-                                
-                                
-                                
-                                
-
-                               
-                                <tr key={ref.id}>
-                                    <TdComp>{ref.timestamp}</TdComp>
-                                    <TdComp>{ref.name}</TdComp>
-                                    <TdComp>{ref.day}</TdComp>
-                                    <TdComp>{ref.commitment}</TdComp>
-                                    <TdComp classname="">{ editFlag ? <div><input type="text" className="px-2 border-2 border-black rounded-md" /></div> : ref.testDay}</TdComp>
-                                  
-                                   
-                                    <TdComp classname=""><button className="bg-black text-white rounded-md m-1 p-1" onClick={()=>{handleDelete(ref)}}>Delete</button></TdComp>
-                                    <TdComp classname="bg-black text-white rounded-md m-1 p-1">Edit</TdComp>
-                                    
-                                </tr>
-
-                               
-
-                                
-
-                               
-
-                            );
-                        })}
+                        {reflections.map((ref) => (
+                            <tr key={ref.id}>
+                                <TdComp>{ref.timestamp}</TdComp>
+                                <TdComp>{ref.name}</TdComp>
+                                <TdComp>{ref.day}</TdComp>
+                                <TdComp>{ref.commitment}</TdComp>
+                                <TdComp>
+                                    {editFlag ? (
+                                        <div>
+                                            <input
+                                                type="text"
+                                                className="px-2 border-2 border-black rounded-md"
+                                            />
+                                        </div>
+                                    ) : (
+                                        ref.testDay
+                                    )}
+                                </TdComp>
+                                <TdComp>
+                                    <button
+                                        className="bg-black text-white rounded-md m-1 p-1"
+                                        onClick={() => handleDelete(ref)}
+                                    >
+                                        Delete
+                                    </button>
+                                </TdComp>
+                                <TdComp classname="bg-black text-white rounded-md m-1 p-1">
+                                    Edit
+                                </TdComp>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
