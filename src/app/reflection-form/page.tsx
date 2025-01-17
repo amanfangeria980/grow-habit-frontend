@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Router } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import {
@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/popover";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usersAll } from "@/lib/data";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     name: z.string().min(1, "Please select your name"),
@@ -49,6 +50,7 @@ type FormValues = z.infer<typeof formSchema>;
 const ReflectionForm = () => {
     const [successFlag, setSuccessFlag] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<String | null>(null);
+    const router = useRouter() ; 
     const today = new Date();
     const dayOfMonth = today.getDate();
     const form = useForm<FormValues>({
@@ -379,6 +381,8 @@ const ReflectionForm = () => {
                         </div>
                     </div>
                 )}
+
+                
                 <div className="flex gap-4 mt-8 mb-4">
                     <Button
                         type="button"
@@ -410,15 +414,28 @@ const ReflectionForm = () => {
                             <h2 className="text-red-500 mb-4">
                                 {errorMessage}
                             </h2>
+
+                            <div className="flex gap-2 justify-around">
+
                             <Button
                                 className="bg-primary text-white rounded-lg py-2 px-4"
                                 onClick={() => {
                                     setErrorMessage(null);
                                 }}
                             >
-                                {" "}
-                                Close{" "}
+                            
+                                Close
                             </Button>
+
+                            <Button onClick={()=>( router.push(
+                                "/user-home"
+                            ))}>
+                                Stats 
+                            </Button>
+
+
+                            </div>
+                            
                         </div>
                     </div>
                 )}
