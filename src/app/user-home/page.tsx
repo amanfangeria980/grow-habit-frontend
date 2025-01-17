@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { usersAll } from "@/lib/data";
+import { useRouter } from "next/navigation";
 import {
     Select,
     SelectContent,
@@ -8,9 +9,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import "@/styles/animations.css"
 
 export default function UserHome() {
     const [selectedName, setSelectedName] = useState<string>("parth");
+    const router = useRouter() 
     const [recordsArray, setRecordsArray] = useState<
         Array<{ value: string; day: number }>
     >([]);
@@ -43,6 +46,7 @@ export default function UserHome() {
 
     return (
         <>
+        
             <div className="p-4 bg-gray-100 min-h-screen">
                 <div className="mb-6">
                     <Select
@@ -72,31 +76,37 @@ export default function UserHome() {
                 </div>
 
                 <div className="grid grid-cols-5 gap-4 justify-center max-w-3xl mx-auto">
-                    {recordsArray.map((item) => (
+                    {recordsArray.map((item) => {
+
+                        // console.log("item : ", item)
+
+                        return(
+                        
                         <div
                             key={item.day}
                             className="flex flex-col items-center p-2"
                         >
                             <div
+                                onClick={()=>{ if(item.value === "undefined" && item.day <= today){ router.push("/reflection-form")}}} 
                                 className={`w-8 h-8 rounded-md ${
                                     item.day >= today
                                         ? "bg-slate-200 border-slate-300"
                                         : item.value === "no"
-                                        ? "bg-red-300 border-red-400"
+                                        ? "bg-black border-slate-300"
                                         : item.value === "gateway"
                                         ? "bg-yellow-300 border-yellow-400"
                                         : item.value === "plus"
                                         ? "bg-green-300 border-green-400"
                                         : item.value === "elite"
                                         ? "bg-green-600 border-green-700"
-                                        : "bg-red-300 border-red-400"
+                                        : "bg-red-300 border-red-400 blink"
                                 } border-2`}
                             ></div>
                             <p className="mt-2 text-xs font-medium text-gray-700">
                                 Day {item.day}
                             </p>
                         </div>
-                    ))}
+                )})}
                 </div>
 
                 <div className="mt-10">
