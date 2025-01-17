@@ -1,6 +1,12 @@
+import { getSession } from "@/lib/getSession";
+import { redirect } from "next/navigation";
 import React from "react";
 
-const HomePage = () => {
+const HomePage = async () => {
+    const session = await getSession();
+    if (!session) {
+        redirect("/login");
+    }
     return (
         <>
             <div className="bg-gray-50 min-h-screen">
