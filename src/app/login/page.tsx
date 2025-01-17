@@ -7,7 +7,9 @@ import { redirect } from "next/navigation";
 
 export default async function Login() {
     const session = await getSession();
+    console.log("Session", session);
     if (session) {
+        console.log("Redirecting to home");
         redirect("/");
     }
 
