@@ -370,14 +370,23 @@ const ReflectionForm = () => {
                             <h2 className="mb-4">
                                 Success ! The form is filled{" "}
                             </h2>
+                            <div className="flex gap-2 justify-center">
+
                             <button
-                                className="bg-black p-1 text-white "
+                                className="bg-gray p-1 text-white "
                                 onClick={() => {
                                     setSuccessFlag(false);
                                 }}
                             >
                                 Close
                             </button>
+
+                            <button className="bg-blue-500 rounded-md  text-white p-1 " onClick={()=>{ router.push("/user-home")}}>
+                                Stats 
+                            </button>
+
+                            </div>
+                            
                         </div>
                     </div>
                 )}
