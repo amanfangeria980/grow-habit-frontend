@@ -1,12 +1,7 @@
-import { getSession } from "@/lib/getSession";
-import { redirect } from "next/navigation";
+import Link from "next/link";
 import React from "react";
 
 const HomePage = async () => {
-    const session = await getSession();
-    if (!session) {
-        redirect("/login");
-    }
     return (
         <>
             <div className="bg-gray-50 min-h-screen">
@@ -17,9 +12,11 @@ const HomePage = async () => {
                     <h3 className="text-2xl mb-6 hover:text-black transition-all duration-300">
                         Build better habits for a better life
                     </h3>
-                    <button className="bg-white rounded-full px-6 py-2 text-blue-500 hover:bg-blue-600 hover:text-white transition-all duration-300 ">
-                        Get Started
-                    </button>
+                    <Link href="/login">
+                        <button className="bg-white rounded-full px-6 py-2 text-blue-500 hover:bg-blue-600 hover:text-white transition-all duration-300 ">
+                            Get Started
+                        </button>
+                    </Link>
                 </div>
 
                 <div className="mb-6">

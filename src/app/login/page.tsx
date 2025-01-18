@@ -2,17 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { SignupCarousel } from "../signup/_components/SignupCarousel";
 import { LoginForm } from "./_components/LoginForm";
-import { getSession } from "@/lib/getSession";
-import { redirect } from "next/navigation";
 
 export default async function Login() {
-    const session = await getSession();
-    console.log("Session", session);
-    if (session) {
-        console.log("Redirecting to home");
-        redirect("/");
-    }
-
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-4 px-2 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8 bg-white p-4 rounded-lg border border-gray-300">
