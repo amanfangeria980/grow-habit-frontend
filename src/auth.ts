@@ -92,7 +92,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                             body: JSON.stringify({
                                 fullName: name,
                                 email,
-                                id: id,
+                                oauthId: id,
                                 image,
                             }),
                         }
