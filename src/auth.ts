@@ -60,8 +60,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     callbacks: {
         async session({ session, token, user }) {
-            // to store google id in db
-            // if (token?.sub) session.user.id = token.sub;
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-user-id`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email: token.email }),
+                }
+            );
+            const data = await response.json();
+            if (token?.sub) session.user.id = data.id;
             if (token.sub && token.fullName && token.email) {
                 session.user.id = token.sub;
                 session.user.name = token.fullName as string;
