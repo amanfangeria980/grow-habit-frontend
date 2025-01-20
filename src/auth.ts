@@ -47,9 +47,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 ) {
                     return user;
                 } else {
-                    throw new customError(
-                        responseData.message || "Invalid Credentials"
-                    );
+                    return {
+                        success: false,
+                        error: responseData.message || "Invalid Credentials",
+                    };
                 }
             },
         }),
