@@ -70,7 +70,7 @@ export function LoginForm() {
     };
 
     const handleGoogleSignIn = async () => {
-        await signIn("google", { callbackUrl: "/user-home" });
+        await signIn("google", { callbackUrl: "/save-details" });
     };
 
     return (
