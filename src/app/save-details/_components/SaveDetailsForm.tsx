@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
+import LoadingComponent from "@/components/loader/LoadingComponent";
 
 const passwordSchema = z
     .string()
@@ -89,8 +90,12 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
             );
             if (response.ok) {
                 toast.success("Phone number saved successfully");
-                setShowPasswordSection(true);
                 setHasPhoneNumber(true);
+                if (hasPassword) {
+                    router.replace("/user-home");
+                } else {
+                    setShowPasswordSection(true);
+                }
             } else {
                 toast.error("Error saving phone number");
             }
@@ -141,10 +146,10 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
 
                 if (hasPhone && hasPass) {
                     router.replace("/user-home");
+                    return;
                 } else if (hasPhone) {
                     setShowPasswordSection(true);
                 }
-
                 setLoading(false);
             } catch (error) {
                 console.error("Error initializing data:", error);
@@ -157,7 +162,7 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <LoadingComponent />;
     }
 
     return (
@@ -171,7 +176,9 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
                         setPhoneNumber={setPhoneNumber}
                         setCountryCode={setCountryCode}
                     />
-                    <Button onClick={savePhoneNumber}>Next</Button>
+                    <Button onClick={savePhoneNumber}>
+                        {hasPassword ? "Save" : "Next"}
+                    </Button>
                 </>
             ) : (
                 <>

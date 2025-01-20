@@ -45,6 +45,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     responseData.success &&
                     responseData.message === "Sign in successful"
                 ) {
+                    user.role = responseData.user.role;
                     return user;
                 } else {
                     return {
@@ -60,12 +61,38 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     callbacks: {
         async session({ session, token, user }) {
-            // to store google id in db
-            // if (token?.sub) session.user.id = token.sub;
-            if (token.sub && token.fullName && token.email) {
+            // fetch the id from the backend
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-user-id`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email: token.email }),
+                }
+            );
+            const responseRole = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/get-user-role`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email: token.email }),
+                }
+            );
+            const data = await response.json();
+            const dataRole = await responseRole.json();
+            session.user.id = data.id;
+            // @ts-ignore
+            session.user.role = dataRole.role;
+            if (token.sub && token.fullName && token.email && token.role) {
                 session.user.id = token.sub;
                 session.user.name = token.fullName as string;
                 session.user.email = token.email as string;
+                // @ts-ignore
+                session.user.role = token.role as string;
             }
             return session;
         },
@@ -75,6 +102,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 // @ts-ignore
                 token.fullName = user.fullName;
                 token.email = user.email;
+                // @ts-ignore
+                token.role = user.role;
             }
             return token;
         },
@@ -92,7 +121,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                             body: JSON.stringify({
                                 fullName: name,
                                 email,
-                                id: id,
+                                oauthId: id,
                                 image,
                             }),
                         }
