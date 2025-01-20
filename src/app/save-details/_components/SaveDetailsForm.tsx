@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
+import LoadingComponent from "@/components/loader/LoadingComponent";
 
 const passwordSchema = z
     .string()
@@ -145,6 +146,7 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
 
                 if (hasPhone && hasPass) {
                     router.replace("/user-home");
+                    return;
                 } else if (hasPhone) {
                     setShowPasswordSection(true);
                 }
@@ -160,7 +162,7 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <LoadingComponent />;
     }
 
     return (
