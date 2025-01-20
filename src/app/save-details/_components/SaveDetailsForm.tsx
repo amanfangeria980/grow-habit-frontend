@@ -16,6 +16,17 @@ const passwordSchema = z
         "Password must contain at least one uppercase letter, one lowercase letter, and one number"
     );
 
+const phoneNumberSchema = z.object({
+    countryCode: z.string().min(1, "Country code is required"),
+    phoneNumber: z
+        .string()
+        .min(10, "Phone number must be at least 10 characters")
+        .regex(
+            /^\+?\d{1,4}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,4}$/,
+            "Please enter a valid phone number"
+        ),
+});
+
 const SaveDetailsPage = ({ email }: { email: string }) => {
     const router = useRouter();
     const [hasPhoneNumber, setHasPhoneNumber] = useState(false);
@@ -26,6 +37,7 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
     const [showPasswordSection, setShowPasswordSection] = useState(false);
     const [password, setPassword] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [phoneNumberError, setPhoneNumberError] = useState("");
 
     const fetchPassword = async () => {
         try {
@@ -74,6 +86,17 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
 
     const savePhoneNumber = async () => {
         try {
+            // Validate phone number before sending
+            const validationResult = phoneNumberSchema.safeParse({
+                phoneNumber,
+                countryCode,
+            });
+
+            if (!validationResult.success) {
+                setPhoneNumberError(validationResult.error.errors[0].message);
+                return;
+            }
+
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/update-phone-number`,
                 {
@@ -136,6 +159,15 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
         }
     };
 
+    const handlePasswordKeyPress = (
+        e: React.KeyboardEvent<HTMLInputElement>
+    ) => {
+        if (e.key === "Enter" && password) {
+            e.preventDefault();
+            savePassword();
+        }
+    };
+
     useEffect(() => {
         const initializeData = async () => {
             try {
@@ -172,10 +204,23 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
                     <h1 className="text-2xl font-bold">
                         Please enter your phone number
                     </h1>
-                    <PhoneNumberInput
-                        setPhoneNumber={setPhoneNumber}
-                        setCountryCode={setCountryCode}
-                    />
+                    <div className="w-full max-w-md space-y-2">
+                        <PhoneNumberInput
+                            setPhoneNumber={(value) => {
+                                setPhoneNumber(value);
+                                setPhoneNumberError("");
+                            }}
+                            setCountryCode={(value) => {
+                                setCountryCode(value);
+                                setPhoneNumberError("");
+                            }}
+                        />
+                        {phoneNumberError && (
+                            <p className="text-sm text-red-500">
+                                {phoneNumberError}
+                            </p>
+                        )}
+                    </div>
                     <Button onClick={savePhoneNumber}>
                         {hasPassword ? "Save" : "Next"}
                     </Button>
@@ -192,6 +237,8 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
                                 setPassword(e.target.value);
                                 setPasswordError("");
                             }}
+                            onKeyDown={handlePasswordKeyPress}
+                            required
                         />
                         {passwordError && (
                             <p className="text-sm text-red-500">
@@ -199,7 +246,13 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
                             </p>
                         )}
                     </div>
-                    <Button onClick={savePassword}>Save</Button>
+                    <Button
+                        disabled={!password}
+                        type="submit"
+                        onClick={savePassword}
+                    >
+                        Save
+                    </Button>
                 </>
             )}
         </div>

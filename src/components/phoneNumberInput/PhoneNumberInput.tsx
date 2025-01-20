@@ -11,6 +11,7 @@ const phoneNumberSchema = z.object({
     countryCode: z.string().min(1, "Country code is required"),
     phoneNumber: z
         .string()
+        .min(1, "Phone number is required")
         .min(10, "Phone number must be at least 10 characters")
         .regex(
             /^\+?\d{1,4}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,4}$/,
@@ -39,6 +40,7 @@ const PhoneNumberInput = ({
             countryCode: "+91",
             phoneNumber: "",
         },
+        mode: "onChange",
     });
 
     return (
@@ -63,10 +65,12 @@ const PhoneNumberInput = ({
                 />
                 <Input
                     {...register("phoneNumber", {
+                        required: "Phone number is required",
                         onChange: (e) => {
                             trigger("phoneNumber");
                             setPhoneNumber(e.target.value);
                         },
+                        onBlur: () => trigger("phoneNumber"),
                     })}
                     type="text"
                     placeholder="Enter phone number"
