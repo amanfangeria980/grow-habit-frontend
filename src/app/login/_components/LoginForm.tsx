@@ -54,7 +54,7 @@ export function LoginForm() {
                 description: "Redirecting to ...",
                 id: toastId,
             });
-            router.push("/user-home");
+            router.replace("/save-details");
             return { success: true, message: "Login successful!" };
         } catch (error) {
             console.error(error);
