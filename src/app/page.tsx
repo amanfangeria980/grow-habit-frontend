@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 
-const HomePage = async () => {
+const HomePage = () => {
     return (
         <>
             <div className="bg-gray-50 min-h-screen">
@@ -13,7 +13,7 @@ const HomePage = async () => {
                         Build better habits for a better life
                     </h3>
                     <Link href="/login">
-                        <button className="bg-white rounded-full px-6 py-2 text-blue-500 hover:bg-blue-600 hover:text-white transition-all duration-300 ">
+                        <button className="bg-white rounded-full px-6 py-2 text-blue-500 hover:bg-blue-600 hover:text-white transition-all duration-300">
                             Get Started
                         </button>
                     </Link>

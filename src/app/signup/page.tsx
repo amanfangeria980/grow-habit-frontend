@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 // Define the validation schema
 const registerSchema = z.object({
@@ -65,6 +67,7 @@ export default function SignUp() {
         mode: "onChange",
         reValidateMode: "onChange",
     });
+    const [showPassword, setShowPassword] = useState(false);
     const onSubmit = async (data: RegisterFormData) => {
         try {
             const response = await registerUser(data);
@@ -212,7 +215,7 @@ export default function SignUp() {
                                     },
                                 })}
                                 type="email"
-                                placeholder="Example@email.com"
+                                placeholder="example@email.com"
                                 className="w-full"
                             />
                             {errors.email && (
@@ -229,17 +232,32 @@ export default function SignUp() {
                             >
                                 Password*
                             </label>
-                            <Input
-                                id="password"
-                                {...register("password", {
-                                    onChange: () => {
-                                        trigger("password");
-                                    },
-                                })}
-                                type="password"
-                                placeholder="At least 8 characters"
-                                className="w-full"
-                            />
+                            <div className="relative">
+                                <Input
+                                    id="password"
+                                    {...register("password", {
+                                        onChange: () => {
+                                            trigger("password");
+                                        },
+                                    })}
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="At least 8 characters"
+                                    className="w-full pr-10"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setShowPassword(!showPassword)
+                                    }
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                >
+                                    {showPassword ? (
+                                        <Eye className="h-4 w-4" />
+                                    ) : (
+                                        <EyeOff className="h-4 w-4" />
+                                    )}
+                                </button>
+                            </div>
                             {errors.password && (
                                 <p className="mt-1 text-xs text-red-600">
                                     {errors.password.message}
