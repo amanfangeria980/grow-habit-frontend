@@ -23,6 +23,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usersAll } from "@/lib/data";
 import { useRouter } from "next/navigation";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 const formSchema = z.object({
     name: z.string().min(1, "Please select your name"),
@@ -48,9 +49,10 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const ReflectionForm = () => {
+    const user = useCurrentUser();
     const [successFlag, setSuccessFlag] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<String | null>(null);
-    const router = useRouter() ; 
+    const router = useRouter();
     const today = new Date();
     const dayOfMonth = today.getDate();
     const form = useForm<FormValues>({
@@ -70,9 +72,13 @@ const ReflectionForm = () => {
         // Create current timestamp in IST
         const now = new Date();
         // Create a new object with updated timestamp
-        const formDataWithTimestamp = {
+        const formDataWithTimestampAndDetails = {
             ...data,
             timestamp: now,
+            userId: user?.id,
+            testMonth: now.getMonth() + 1,
+            testYear: now.getFullYear(),
+            deletedAt: null,
         };
 
         try {
@@ -81,7 +87,7 @@ const ReflectionForm = () => {
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formDataWithTimestamp),
+                    body: JSON.stringify(formDataWithTimestampAndDetails),
                 }
             );
             const repData = await response.json();
@@ -371,27 +377,28 @@ const ReflectionForm = () => {
                                 Success ! The form is filled{" "}
                             </h2>
                             <div className="flex gap-2 justify-center">
+                                <button
+                                    className="bg-gray p-1 text-white "
+                                    onClick={() => {
+                                        setSuccessFlag(false);
+                                    }}
+                                >
+                                    Close
+                                </button>
 
-                            <button
-                                className="bg-gray p-1 text-white "
-                                onClick={() => {
-                                    setSuccessFlag(false);
-                                }}
-                            >
-                                Close
-                            </button>
-
-                            <button className="bg-blue-500 rounded-md  text-white p-1 " onClick={()=>{ router.push("/user-home")}}>
-                                Stats 
-                            </button>
-
+                                <button
+                                    className="bg-blue-500 rounded-md  text-white p-1 "
+                                    onClick={() => {
+                                        router.push("/user-home");
+                                    }}
+                                >
+                                    Stats
+                                </button>
                             </div>
-                            
                         </div>
                     </div>
                 )}
 
-                
                 <div className="flex gap-4 mt-8 mb-4">
                     <Button
                         type="button"
@@ -425,26 +432,21 @@ const ReflectionForm = () => {
                             </h2>
 
                             <div className="flex gap-2 justify-around">
+                                <Button
+                                    className="bg-primary text-white rounded-lg py-2 px-4"
+                                    onClick={() => {
+                                        setErrorMessage(null);
+                                    }}
+                                >
+                                    Close
+                                </Button>
 
-                            <Button
-                                className="bg-primary text-white rounded-lg py-2 px-4"
-                                onClick={() => {
-                                    setErrorMessage(null);
-                                }}
-                            >
-                            
-                                Close
-                            </Button>
-
-                            <Button onClick={()=>( router.push(
-                                "/user-home"
-                            ))}>
-                                Stats 
-                            </Button>
-
-
+                                <Button
+                                    onClick={() => router.push("/user-home")}
+                                >
+                                    Stats
+                                </Button>
                             </div>
-                            
                         </div>
                     </div>
                 )}
