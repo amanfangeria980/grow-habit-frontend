@@ -2,7 +2,7 @@ import { getSession } from "@/lib/getSession";
 import { redirect } from "next/navigation";
 import "@/styles/animations.css";
 
-async function UserHomePage({ params }: { params: { userId: string } }) {
+async function UserHomePage() {
     const auth = await getSession();
 
     if (!auth?.user) {
@@ -13,9 +13,7 @@ async function UserHomePage({ params }: { params: { userId: string } }) {
 
     // Fetch user data server-side
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${
-            "parth" || auth.user.name
-        }`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${auth.user.name}`,
         { cache: "no-store" }
     );
     const data = await response.json();
