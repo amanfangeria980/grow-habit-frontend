@@ -24,7 +24,9 @@ export default auth((req) => {
         isLoggedIn &&
         isAuthRoutes.some((route) => req.nextUrl.pathname.startsWith(route))
     ) {
-        return NextResponse.redirect(new URL("/user-home", req.nextUrl.origin));
+        return NextResponse.redirect(
+            new URL("/save-details", req.nextUrl.origin)
+        );
     }
 
     // Add current path to headers

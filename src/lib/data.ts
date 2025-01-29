@@ -1,8 +1,10 @@
 export const usersAll: string[] = [
     "parth",
     "deepika",
-    "sony",
-    "vandana",
-    "govindraju",
     "kavya",
+    "rashmi",
+    "govindraju",
+    "richa",
+    "aditya",
+    "testuser",
 ];
