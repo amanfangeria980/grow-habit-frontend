@@ -115,7 +115,8 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
                 toast.success("Phone number saved successfully");
                 setHasPhoneNumber(true);
                 if (hasPassword) {
-                    router.replace("/user-home");
+                    router.replace("/user-home/me");
+                    router.refresh();
                 } else {
                     setShowPasswordSection(true);
                 }
@@ -149,7 +150,8 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
             );
             if (response.ok) {
                 toast.success("Password saved successfully");
-                router.replace("/user-home");
+                router.replace("/user-home/me");
+                router.refresh();
             } else {
                 toast.error("Error saving password");
             }
@@ -177,7 +179,8 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
                 ]);
 
                 if (hasPhone && hasPass) {
-                    router.replace("/user-home");
+                    router.replace("/user-home/me");
+                    router.refresh();
                     return;
                 } else if (hasPhone) {
                     setShowPasswordSection(true);

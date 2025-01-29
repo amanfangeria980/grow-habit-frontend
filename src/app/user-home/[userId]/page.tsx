@@ -4,7 +4,7 @@ import "@/styles/animations.css";
 
 async function UserHomePage() {
     const auth = await getSession();
-
+    const name = auth?.user?.name?.split(" ")[0].toLowerCase();
     if (!auth?.user) {
         redirect("/login");
     }
@@ -13,7 +13,7 @@ async function UserHomePage() {
 
     // Fetch user data server-side
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${auth.user.name}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${name}`,
         { cache: "no-store" }
     );
     const data = await response.json();

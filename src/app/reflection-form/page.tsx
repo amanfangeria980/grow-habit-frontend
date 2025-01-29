@@ -442,7 +442,7 @@ const ReflectionForm = () => {
                                 </Button>
 
                                 <Button
-                                    onClick={() => router.push("/user-home")}
+                                    onClick={() => router.push("/user-home/me")}
                                 >
                                     Stats
                                 </Button>
