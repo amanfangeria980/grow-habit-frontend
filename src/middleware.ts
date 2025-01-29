@@ -27,5 +27,9 @@ export default auth((req) => {
         return NextResponse.redirect(new URL("/user-home", req.nextUrl.origin));
     }
 
-    return NextResponse.next();
+    // Add current path to headers
+    const headers = new Headers(req.headers);
+    headers.set("x-current-path", req.nextUrl.pathname);
+
+    return NextResponse.next({ headers });
 });
