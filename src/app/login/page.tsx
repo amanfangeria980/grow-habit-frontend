@@ -9,13 +9,14 @@ export default async function Login() {
             <div className="max-w-md w-full space-y-8 bg-white p-4 rounded-lg border border-gray-300">
                 {/* Logo */}
                 <div className="flex items-center gap-2">
-                    <Image
-                        src="/logo.png"
-                        alt="Logo"
-                        width={48}
-                        height={48}
-                        className="object-contain rounded-full border border-gray-300"
-                    />
+                    <div className="w-12 h-12 relative">
+                        <Image
+                            src="/logo.png"
+                            alt="Logo"
+                            fill
+                            className="object-contain rounded-full border border-gray-300"
+                        />
+                    </div>
                     <h1 className="text-xl font-bold text-text-100">
                         Grow Habit
                     </h1>
