@@ -87,7 +87,7 @@ export default function SignUp() {
     };
 
     const handleGoogleSignIn = async () => {
-        await signIn("google", { callbackUrl: "/user-home" });
+        await signIn("google", { callbackUrl: "/user-home/me" });
     };
 
     return (
