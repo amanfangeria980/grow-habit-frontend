@@ -24,6 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usersAll } from "@/lib/data";
 import { useRouter } from "next/navigation";
 import useCurrentUser from "@/hooks/useCurrentUser";
+import { toast } from "sonner";
 
 const formSchema = z.object({
     name: z.string().min(1, "Please select your name"),
@@ -50,15 +51,17 @@ type FormValues = z.infer<typeof formSchema>;
 
 const ReflectionForm = () => {
     const user = useCurrentUser();
+    const name = user?.name?.split(" ")[0].toLowerCase();
+    //@ts-ignore
+    const role = user?.role;
     const [successFlag, setSuccessFlag] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<String | null>(null);
     const router = useRouter();
     const today = new Date();
     const dayOfMonth = today.getDate();
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
+            name: name,
             commitment: "",
             comradeConnection: "",
             cuePerformance: "no",
@@ -69,53 +72,54 @@ const ReflectionForm = () => {
     });
 
     const onSubmit = async (data: FormValues) => {
-        // Create current timestamp in IST
-        const now = new Date();
-        // Create a new object with updated timestamp
-        const formDataWithTimestampAndDetails = {
-            ...data,
-            timestamp: now,
-            userId: user?.id,
-            testMonth: now.getMonth() + 1,
-            testYear: now.getFullYear(),
-            deletedAt: null,
-        };
-
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/reflect`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formDataWithTimestampAndDetails),
+                    body: JSON.stringify({
+                        ...data,
+                        timestamp: new Date(),
+                        userId: user?.id,
+                        testMonth: new Date().getMonth() + 1,
+                        testYear: new Date().getFullYear(),
+                        deletedAt: null,
+                    }),
                 }
             );
             const repData = await response.json();
 
             if (repData.success) {
-                setSuccessFlag(true);
+                toast.success("Form submitted successfully!", {
+                    description: "Your reflection has been saved.",
+                });
+                router.push("/user-home/me");
             } else {
-                setErrorMessage(repData.message);
+                toast.error("Submission failed", {
+                    description:
+                        repData.message ||
+                        "An error occurred while submitting the form",
+                });
             }
         } catch (error) {
             console.log(
                 "There is an error at fetching data at reflection form",
                 error
             );
+            toast.error("Submission failed", {
+                description: "An error occurred while submitting the form",
+            });
         }
     };
 
     return (
         <>
             <form onSubmit={form.handleSubmit(onSubmit)} className="m-3">
-                {/* Header */}
-                <div>
-                    The error message is{" "}
-                    {errorMessage ? errorMessage : "there is no error message"}
-                </div>
-
                 <div className="flex flex-col gap-2">
-                    <h5 className="text-lg">Reflection Status</h5>
+                    <h5 className="text-xl text-center underline underline-offset-4">
+                        Reflection Form
+                    </h5>
                     <p className="text-xs font-extralight">
                         "When performance is measured, performance improves.
                         When performance is measured and reported back, the rate
@@ -131,6 +135,8 @@ const ReflectionForm = () => {
                             onValueChange={(value) =>
                                 form.setValue("name", value)
                             }
+                            defaultValue={name}
+                            disabled={role === "admin" ? false : true}
                         >
                             <SelectTrigger className="w-full bg-white rounded-lg py-3 px-4 text-left text-gray-600 flex justify-between items-center shadow-xl h-12">
                                 <SelectValue
@@ -370,35 +376,6 @@ const ReflectionForm = () => {
                 </div>
                 {/* buttons */}
 
-                {successFlag && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                        <div className="flex flex-col bg-green-300 border-[1.5px] border-green-400 p-6 shadow-xl rounded-lg  ">
-                            <h2 className="mb-4">
-                                Success ! The form is filled{" "}
-                            </h2>
-                            <div className="flex gap-2 justify-center">
-                                <button
-                                    className="bg-gray p-1 text-white "
-                                    onClick={() => {
-                                        setSuccessFlag(false);
-                                    }}
-                                >
-                                    Close
-                                </button>
-
-                                <button
-                                    className="bg-blue-500 rounded-md  text-white p-1 "
-                                    onClick={() => {
-                                        router.push("/user-home");
-                                    }}
-                                >
-                                    Stats
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
                 <div className="flex gap-4 mt-8 mb-4">
                     <Button
                         type="button"
@@ -415,41 +392,6 @@ const ReflectionForm = () => {
                         Save Progress
                     </Button>
                 </div>
-
-                {/* the below is an error pop up  */}
-
-                {errorMessage === null ? (
-                    ""
-                ) : (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                        <div className=" bg-white p-6 rounded-lg shadow-xl text-center">
-                            <h2 className="font-bold text-red-900 text-md">
-                                Error
-                            </h2>
-
-                            <h2 className="text-red-500 mb-4">
-                                {errorMessage}
-                            </h2>
-
-                            <div className="flex gap-2 justify-around">
-                                <Button
-                                    className="bg-primary text-white rounded-lg py-2 px-4"
-                                    onClick={() => {
-                                        setErrorMessage(null);
-                                    }}
-                                >
-                                    Close
-                                </Button>
-
-                                <Button
-                                    onClick={() => router.push("/user-home/me")}
-                                >
-                                    Stats
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                )}
             </form>
         </>
     );
