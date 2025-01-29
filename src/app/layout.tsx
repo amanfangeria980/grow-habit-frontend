@@ -35,6 +35,12 @@ export default async function RootLayout({
 
     return (
         <html lang="en" suppressHydrationWarning>
+            <head>
+                <link rel="preload" href="/signup/i1.png" as="image" />
+                <link rel="preload" href="/signup/i2.png" as="image" />
+                <link rel="preload" href="/signup/i3.png" as="image" />
+                <link rel="preload" href="/logo.png" as="image" />
+            </head>
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
