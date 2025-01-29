@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Router } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -25,6 +25,8 @@ import { usersAll } from "@/lib/data";
 import { useRouter } from "next/navigation";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { toast } from "sonner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import LoadingComponent from "@/components/loader/LoadingComponent";
 
 const formSchema = z.object({
     name: z.string().min(1, "Please select your name"),
@@ -50,11 +52,29 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const ReflectionForm = () => {
-    const user = useCurrentUser();
+    const { data: user, isLoading } = useQuery<{
+        name: string;
+        role: string;
+        email: string;
+        id: string;
+    } | null>({
+        queryKey: ["user"],
+        queryFn: async () => {
+            const session = await fetch("/api/auth/session");
+            const data = await session.json();
+            if (!data.user) return null;
+            return {
+                name: data.user.name,
+                role: data.user.role,
+                email: data.user.email,
+                id: data.user.id,
+            };
+        },
+        staleTime: Infinity,
+    });
     const name = user?.name?.split(" ")[0].toLowerCase();
     //@ts-ignore
     const role = user?.role;
-    const [successFlag, setSuccessFlag] = useState<boolean>(false);
     const router = useRouter();
     const today = new Date();
     const dayOfMonth = today.getDate();
@@ -112,6 +132,9 @@ const ReflectionForm = () => {
             });
         }
     };
+    if (isLoading) {
+        return <LoadingComponent />;
+    }
 
     return (
         <>

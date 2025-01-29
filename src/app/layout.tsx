@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
 import { headers } from "next/headers";
 import NavHeader from "@/components/navbar/NavHeader";
+import TanstackProvider from "@/providers/tanstack-provider";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -25,9 +26,9 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
     children,
-}: Readonly<{
+}: {
     children: React.ReactNode;
-}>) {
+}) {
     const headersList = await headers();
     const pathname = headersList.get("x-current-path");
     const publicRoutes = ["/login", "/signup", "/", "/save-details"];
@@ -44,9 +45,11 @@ export default async function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                {!isPublicRoute && <NavHeader />}
-                <SessionProvider>{children}</SessionProvider>
-                <Toaster />
+                <TanstackProvider>
+                    {!isPublicRoute && <NavHeader />}
+                    <SessionProvider>{children}</SessionProvider>
+                    <Toaster />
+                </TanstackProvider>
             </body>
         </html>
     );
