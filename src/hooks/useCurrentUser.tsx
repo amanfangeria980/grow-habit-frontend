@@ -16,9 +16,7 @@
 // }
 
 "use client";
-import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 
 export default function useCurrentUser() {
     const { data: session } = useSession();

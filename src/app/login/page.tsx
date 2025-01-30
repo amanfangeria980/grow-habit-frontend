@@ -12,9 +12,9 @@ export default async function Login() {
                     <Image
                         src="/logo.png"
                         alt="Logo"
-                        width={48}
-                        height={48}
-                        className="object-contain rounded-full border border-gray-300"
+                        width={60}
+                        height={60}
+                        className=""
                     />
                     <h1 className="text-xl font-bold text-text-100">
                         Grow Habit
