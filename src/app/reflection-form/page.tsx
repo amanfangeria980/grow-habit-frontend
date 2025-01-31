@@ -29,7 +29,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import LoadingComponent from "@/components/loader/LoadingComponent";
 
 const formSchema = z.object({
-    name: z.string().min(1, "Please select your name"),
+    // name: z.string().min(1, "Please select your name"),
     commitment: z.string().min(1, "Please select your commitment status"),
     date: z.date({
         required_error: "Please select a date",
@@ -49,6 +49,9 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const ReflectionForm = () => {
+
+    const [name, setName] = useState<string>("")
+    
     const { data: user, isLoading } = useQuery<{
         name: string;
         role: string;
@@ -60,6 +63,8 @@ const ReflectionForm = () => {
             const session = await fetch("/api/auth/session");
             const data = await session.json();
             if (!data.user) return null;
+
+
             return {
                 name: data.user.name,
                 role: data.user.role,
@@ -76,7 +81,7 @@ const ReflectionForm = () => {
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
+            // name: name,
             commitment: "",
             comradeConnection: "",
             cuePerformance: "no",
@@ -96,22 +101,25 @@ const ReflectionForm = () => {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        ...dataWithoutDate,
+                        ...data,
                         timestamp: new Date(),
                         userId: user?.id,
                         testMonth: new Date().getMonth() + 1,
                         testYear: new Date().getFullYear(),
                         deletedAt: null,
+                        name : user?.name,
+                      
                     }),
                 }
             );
             const repData = await response.json();
+            console.log("This is the data from the backend ", repData)
 
             if (repData.success) {
                 toast.success("Form submitted successfully!", {
                     description: "Your reflection has been saved.",
                 });
-                router.push("/user-home/me");
+                // router.push("/user-home/me");
             } else {
                 toast.error("Submission failed", {
                     description:
@@ -148,7 +156,7 @@ const ReflectionForm = () => {
                 </div>
                 {/* choose you name */}
 
-                <div className="bg-gray min-h-36 p-6 rounded-3xl mt-5">
+                {/* <div className="bg-gray min-h-36 p-6 rounded-3xl mt-5">
                     <h3 className="text-xl text-text-100 mb-4">Who are you?</h3>
                     <div>
                         <Select
@@ -181,7 +189,7 @@ const ReflectionForm = () => {
                             </p>
                         )}
                     </div>
-                </div>
+                </div> */}
                 {/* first question */}
                 <div className="bg-gray min-h-36 p-6 rounded-3xl mt-5">
                     <h3 className="text-xl text-text-100 mb-4">

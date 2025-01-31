@@ -9,3 +9,13 @@ export type SignInFormData = {
     email: string;
     password: string;
 };
+
+
+export type MNKGroups = { 
+
+    createdAt : string ; 
+    id : string ; 
+    name : string ; 
+    users : string[]
+
+}

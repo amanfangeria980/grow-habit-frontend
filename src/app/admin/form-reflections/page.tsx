@@ -180,9 +180,7 @@ export default function Page() {
                             <th className="border-2 border-black px-4 py-2 min-w-[100px]">
                                 Name
                             </th>
-                            <th className="border-2 border-black px-4 py-2 min-w-[80px]">
-                                Day
-                            </th>
+                         
                             <th className="border-2 border-black px-4 py-2 min-w-[150px]">
                                 Commitment
                             </th>
@@ -204,7 +202,7 @@ export default function Page() {
                                     {formatTimestamp(ref.timestamp)}
                                 </TdComp>
                                 <TdComp>{ref.name}</TdComp>
-                                <TdComp>{ref.day}</TdComp>
+                               
                                 <TdComp>{ref.commitment}</TdComp>
                                 <TdComp>
                                     {editFlag === ref.id ? (
