@@ -4,7 +4,9 @@ import "@/styles/animations.css";
 
 async function UserHomePage() {
     const auth = await getSession();
-    const name = auth?.user?.name?.split(" ")[0].toLowerCase();
+    console.log("The value of the user from the backend is ", auth?.user) ; 
+    // const name = auth?.user?.name?.split(" ")[0].toLowerCase();
+    const userId = auth?.user?.id ; 
     if (!auth?.user) {
         redirect("/login");
     }
@@ -13,11 +15,12 @@ async function UserHomePage() {
 
     // Fetch user data server-side
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${name}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${userId}`,
         { cache: "no-store" }
     );
     const data = await response.json();
     const recordsArray = data.success ? data.data : [];
+    // console.log("This is the value of records array ", recordsArray)
 
     return (
         <div className="p-4 bg-gray-100 min-h-screen">
@@ -29,6 +32,7 @@ async function UserHomePage() {
             </div>
 
             <div className="grid grid-cols-5 gap-4 justify-center max-w-3xl mx-auto">
+                {JSON.stringify(recordsArray)}
                 {recordsArray.map((item: { value: string; day: number }) => (
                     <div
                         key={item.day}
