@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { StatsComponent } from "./_components/StatsComponent";
 
 export default function Page() {
     const [reflections, setReflections] = useState<any>([]);
@@ -55,10 +56,15 @@ export default function Page() {
     return (
         <>
             <div>This is the habit group dashboard </div>
+            <div className="m-2">
+                <h2>This is the raw reflections </h2>
+                {
+                    JSON.stringify(reflections)
+                }
+            </div>
             {
                 <div>
                     <h2>Users</h2>
-                    <div>{JSON.stringify(users)}</div>
                     <h2>UniDays</h2>
                     <div>{JSON.stringify(uniDays)}</div>
                     <div>{JSON.stringify(dataMatrix)}</div>
@@ -93,6 +99,10 @@ export default function Page() {
                         ))}
                     </tbody>
                 </table>
+            </div>
+
+            <div>
+                <StatsComponent reflections={reflections} users={users} uniDays={uniDays} dataMatrix={dataMatrix}/>
             </div>
         </>
     );
