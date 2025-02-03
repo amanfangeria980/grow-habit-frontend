@@ -2,41 +2,79 @@
 import { useState, useEffect } from "react";
 export function StatsComponent({reflections, users, uniDays, dataMatrix} : {reflections : any, users : any, uniDays : any, dataMatrix : any}){
 
-    const reflectionRate : Record<string, number> = { }  ; 
+    let reflectionRate : Record<string, number> = {}  ; 
+    let consistentRate : Record<string, number> = {} ; 
+    let cueRate : Record<string, number> = {} ; 
+    let comradeRate : Record<string, number> = {} ; 
+    let pushRate : Record<string, number> = {} ; 
     let today = new Date() ; 
     let totalNum = today.getDate() -1 ; 
 
     users.forEach((user : any)=>{
 
         let reflectionScore = 0 ; 
+        let consistentScore = 0 ; 
+        let pushScore = 0 ; 
+        let cueScore = 0 ; 
+        let comradeScore = 0 ; 
+
 
         uniDays.forEach((day : any)=>{
 
-            if(Number(day) > totalNum)
-            {}
+            if(Number(day) <= totalNum)
+            {
+                if(dataMatrix[day][user])
+                {
+                    const reflection = dataMatrix[day][user].commitment; 
+                    const cueReflection = dataMatrix[day][user].cuePerformance ; 
+                    const comradeReflection = dataMatrix[day][user].comradeConnection ; 
+    
+                    if(reflection === 'no' || reflection === 'yes' || reflection === 'gateway' || reflection === 'plus' || reflection === 'elite')
+                    {
+                        reflectionScore++ ; 
+                    }
+
+                    if(reflection === 'yes' || reflection === 'gateway' || reflection === 'plus' || reflection === 'elite')
+                    {
+                        consistentScore++ ; 
+                    }
+
+                    if(reflection === 'yes' || reflection ===  "plus" || reflection === "elite")
+                    {
+                        pushScore++ ; 
+
+                    }
+
+                    if(cueReflection === "yes")
+                    {
+                        cueScore++ ; 
+                    }
+
+                    if(comradeReflection === "yes")
+                    {
+                        comradeScore++ ; 
+                    }
+    
+                }
+            }
 
            
 
-            if(dataMatrix[day][user])
-            {
-                const reflection = dataMatrix[day][user] ; 
-
-            if(reflection === 'no' || reflection === 'yes' || reflection === 'gateway' || reflection === 'plus' || reflection === 'elite')
-            {
-                reflectionScore++ ; 
-            }
-
-            }
+            
             
             
 
         })
 
         reflectionRate[user] = (reflectionScore/totalNum)*100 ; 
+        consistentRate[user] = (consistentScore/totalNum)*100 ; 
+        pushRate[user] = (pushScore/totalNum)*100 ; 
+        cueRate[user] = (cueScore/totalNum)*100 ; 
+        comradeRate[user] = (comradeScore/totalNum)*100 ; 
 
     })
 
-    console.log("These are the reflection rates : ", reflectionRate)
+   
 
 
     
@@ -46,13 +84,13 @@ export function StatsComponent({reflections, users, uniDays, dataMatrix} : {refl
 
         <div>
             <h2>This is a stats component </h2>
-            <div>
+            {/* <div>
 
                 {
                     JSON.stringify(dataMatrix)
                 }
               
-            </div>
+            </div> */}
             <table className="border-2 border-black">
                 <thead>
                 <tr className="border-2 border-black">
@@ -72,6 +110,12 @@ export function StatsComponent({reflections, users, uniDays, dataMatrix} : {refl
                             <Trcomp key={index}>
                                 <Tcomp>{user}</Tcomp>
                                 <Tcomp>{reflectionRate[user]}</Tcomp>
+                                <Tcomp>{consistentRate[user]}</Tcomp>
+                                <Tcomp> {cueRate[user]} </Tcomp>
+                                <Tcomp>{pushRate[user]}</Tcomp>
+                                <Tcomp>{comradeRate[user]}</Tcomp>
+
+                                
                             </Trcomp>
                         )
                         
