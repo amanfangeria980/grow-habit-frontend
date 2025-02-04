@@ -109,11 +109,11 @@ export function StatsComponent({reflections, users, uniDays, dataMatrix} : {refl
                         return(
                             <Trcomp key={index}>
                                 <Tcomp>{user}</Tcomp>
-                                <Tcomp>{reflectionRate[user]}</Tcomp>
-                                <Tcomp>{consistentRate[user]}</Tcomp>
-                                <Tcomp> {cueRate[user]} </Tcomp>
-                                <Tcomp>{pushRate[user]}</Tcomp>
-                                <Tcomp>{comradeRate[user]}</Tcomp>
+                                <Tcomp>{Math.round(reflectionRate[user])}</Tcomp>
+                                <Tcomp>{Math.round(consistentRate[user])}</Tcomp>
+                                <Tcomp> {Math.round(cueRate[user])} </Tcomp>
+                                <Tcomp>{Math.round(pushRate[user])}</Tcomp>
+                                <Tcomp>{Math.round(comradeRate[user])}</Tcomp>
 
                                 
                             </Trcomp>
@@ -136,7 +136,7 @@ export function StatsComponent({reflections, users, uniDays, dataMatrix} : {refl
 
 function Tcomp({children} : {children : any}){
     return(
-        <th className="border-2 border-black">
+        <th className="border-2 border-black py-1 px-2">
             {children}
             
         </th>
@@ -145,7 +145,7 @@ function Tcomp({children} : {children : any}){
 
 function Trcomp({children} : {children : any}){
     return(
-        <tr className="border-2 border-black">
+        <tr className="border-2 border-black py-1 px-2">
             {children}
             
         </tr>
