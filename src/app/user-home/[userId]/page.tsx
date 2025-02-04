@@ -32,7 +32,7 @@ async function UserHomePage() {
             </div>
 
             <div className="grid grid-cols-5 gap-4 justify-center max-w-3xl mx-auto">
-                {JSON.stringify(recordsArray)}
+               
                 {recordsArray.map((item: { value: string; day: number }) => (
                     <div
                         key={item.day}

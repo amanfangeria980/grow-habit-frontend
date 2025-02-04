@@ -20,6 +20,12 @@ export default function UserHome() {
     >([]);
     const [loading, setLoading] = useState(true);
     const today = new Date().getDate();
+    const fetchAllUsers = ()=>{
+        
+    }
+    let fetchUsers = []
+
+
 
     useEffect(() => {
         const fetchUserData = async () => {
