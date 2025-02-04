@@ -1,6 +1,7 @@
 import { getSession } from "@/lib/getSession";
 import { redirect } from "next/navigation";
 import "@/styles/animations.css";
+import { Card } from "@/components/ui/card";
 
 async function UserHomePage() {
     const auth = await getSession();
@@ -19,13 +20,22 @@ async function UserHomePage() {
     const data = await response.json();
     const recordsArray = data.success ? data.data : [];
 
+    const dataMatrix : Record<string, { commitment : string, comradeConnection : string}> = {}
+
     return (
         <div className="p-4 bg-gray-100 min-h-screen">
             <div className="text-center mb-4">
                 <h1 className="text-xl font-semibold">Hi, {auth.user.name}</h1>
-                <p className="text-gray-600 mt-2">
-                    Your two-pointer status for today is:
-                </p>
+
+                <div className="flex gap-2 justify-center mt-2">
+                    <Card className="p-2 ">
+                        Your reflection rate is : <b></b>
+                    </Card>
+                    <Card className="p-2">
+                        Your CoC score is : <b></b>
+                    </Card>
+                </div>
+               
             </div>
 
             <div className="grid grid-cols-5 gap-4 justify-center max-w-3xl mx-auto">

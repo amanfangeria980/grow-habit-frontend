@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { StatsComponent } from "./_components/StatsComponent";
+import { Card } from "@/components/ui/card";
 
 export default function Page() {
     const [reflections, setReflections] = useState<any>([]);
@@ -29,7 +31,7 @@ export default function Page() {
         new Set(reflections.map((r: any) => r.testDay))
     ).sort((a: any, b: any) => a - b);
 
-    const dataMatrix: Record<number, Record<string, string>> = {};
+    const dataMatrix: Record<number, Record<string, {commitment : string, cuePerformance : string, comradeConnection : string}>> = {};
 
     uniDays.forEach((day: any) => {
         dataMatrix[day] = {}; // Initialize an inner object for the day
@@ -37,7 +39,7 @@ export default function Page() {
             const reflection = reflections.find(
                 (r: any) => r.testDay === day && r.name === user
             );
-            dataMatrix[day][user] = reflection ? reflection.commitment : "-";
+            dataMatrix[day][user] = {commitment : reflection ? reflection.commitment : "-", cuePerformance : reflection ? reflection.cuePerformance : "-", comradeConnection : reflection ? reflection.comradeConnection : "-", }
         });
     });
 
@@ -55,16 +57,25 @@ export default function Page() {
     return (
         <>
             <div>This is the habit group dashboard </div>
-            {
+            {/* <div className="m-2">
+                <h2>This is the raw reflections </h2>
+                {
+                    JSON.stringify(reflections)
+                }
+            </div> */}
+            {/* {
                 <div>
                     <h2>Users</h2>
-                    <div>{JSON.stringify(users)}</div>
-                    <h2>UniDays</h2>
                     <div>{JSON.stringify(uniDays)}</div>
+                    <h2>Data Matrix</h2>
                     <div>{JSON.stringify(dataMatrix)}</div>
                 </div>
-            }
+            } */}
 
+            <div className="flex flex-col gap-2 m-2 p-2 ">
+
+            
+     
             <div>
                 <table className="border-2 border-black">
                     <thead>
@@ -86,13 +97,22 @@ export default function Page() {
                                 <TdComp>{day}</TdComp>
                                 {users.map((user: any) => (
                                     <TdComp key={`${day}-${user}`}>
-                                        {dataMatrix[day][user]}
+                                        {dataMatrix[day][user].commitment}
                                     </TdComp>
                                 ))}
                             </tr>
                         ))}
                     </tbody>
                 </table>
+            </div>
+
+
+            <div>
+                <StatsComponent reflections={reflections} users={users} uniDays={uniDays} dataMatrix={dataMatrix}/>
+            </div>
+
+           
+
             </div>
         </>
     );
