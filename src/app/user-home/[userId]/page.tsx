@@ -19,8 +19,55 @@ async function UserHomePage() {
     );
     const data = await response.json();
     const recordsArray = data.success ? data.data : [];
+    const dataMatrix : Record<string, { commitment : string}> = {}
+    let reflectionRate : any = "" ; 
+    let uniDays : any = []
+   
 
-    const dataMatrix : Record<string, { commitment : string, comradeConnection : string}> = {}
+    if(data.success)
+    {
+
+        const today = new Date().getDate() ; 
+
+
+        
+
+    uniDays = Array.from(new Set(recordsArray.map((r : any)=>r.day))).sort((a : any, b: any)=> a - b)
+
+    recordsArray.map((ref : any)=>{
+
+        if(ref.day < today)
+        {
+            dataMatrix[ref.day] = {commitment : ref.value} ; 
+
+        }
+        
+    })
+
+    let reflectionScore = 0 ; 
+
+    uniDays.map((day : any)=>{
+        if(day < today)
+        {
+
+            if(dataMatrix[day].commitment === 'gateway' || dataMatrix[day].commitment === 'no' || dataMatrix[day].commitment === "plus" || dataMatrix[day].commitment === "elite")
+            {
+                reflectionScore++ ; 
+
+            }
+            
+        }
+    })
+
+     reflectionRate = (reflectionScore/(today - 1))*100 ; 
+     console.log("This is the value of reflectionScore ", reflectionScore)
+     console.log("This is the value of reflection rate ", reflectionRate)
+
+
+
+    }
+
+    
 
     return (
         <div className="p-4 bg-gray-100 min-h-screen">
@@ -29,14 +76,32 @@ async function UserHomePage() {
 
                 <div className="flex gap-2 justify-center mt-2">
                     <Card className="p-2 ">
-                        Your reflection rate is : <b></b>
+                        Your reflection rate is : <b> {`${reflectionRate}%` || ""} </b>
                     </Card>
-                    <Card className="p-2">
+                    {/* <Card className="p-2">
                         Your CoC score is : <b></b>
-                    </Card>
+                    </Card> */}
                 </div>
                
             </div>
+            {/* <div>
+                This is the valeu of recordsArray
+                {
+                    JSON.stringify(recordsArray)
+                }
+            </div>
+            <div>
+                <h2>This is the value of dataMatrix</h2>
+                {
+                    JSON.stringify(dataMatrix)
+                }
+            </div>
+            <div>
+                <h2>This is the value of uniDays </h2>
+                {
+                    JSON.stringify(uniDays)
+                }
+            </div> */}
 
             <div className="grid grid-cols-5 gap-4 justify-center max-w-3xl mx-auto">
                 {recordsArray.map((item: { value: string; day: number }) => (
