@@ -19,7 +19,7 @@ const ExampleTextScroll: React.FC = () => {
             items={items}
             speed={50}
             direction="left"
-            className="h-full"
+            className="h-full text-white"
         />
     );
 };
