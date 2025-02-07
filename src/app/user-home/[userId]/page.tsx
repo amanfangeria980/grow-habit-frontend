@@ -2,6 +2,7 @@ import { getSession } from "@/lib/getSession";
 import { redirect } from "next/navigation";
 import "@/styles/animations.css";
 import { Card } from "@/components/ui/card";
+import { HabitGrid } from "../_components/HabitGrid";
 
 async function UserHomePage() {
     const auth = await getSession();
@@ -67,56 +68,12 @@ async function UserHomePage() {
                         <b> {`${reflectionRate}%` || ""} </b>
                     </Card>
                     {/* <Card className="p-2">
-                        Your CoC score is : <b></b>
-                    </Card> */}
+                            Your CoC score is : <b></b>
+                        </Card> */}
                 </div>
             </div>
-            {/* <div>
-                This is the valeu of recordsArray
-                {
-                    JSON.stringify(recordsArray)
-                }
-            </div>
-            <div>
-                <h2>This is the value of dataMatrix</h2>
-                {
-                    JSON.stringify(dataMatrix)
-                }
-            </div>
-            <div>
-                <h2>This is the value of uniDays </h2>
-                {
-                    JSON.stringify(uniDays)
-                }
-            </div> */}
 
-            <div className="grid grid-cols-5 gap-4 justify-center max-w-3xl mx-auto">
-                {recordsArray.map((item: { value: string; day: number }) => (
-                    <div
-                        key={item.day}
-                        className="flex flex-col items-center p-2"
-                    >
-                        <div
-                            className={`w-8 h-8 rounded-md ${
-                                item.day >= today
-                                    ? "bg-slate-200 border-slate-300"
-                                    : item.value === "no"
-                                    ? "bg-black border-slate-300"
-                                    : item.value === "gateway"
-                                    ? "bg-yellow-300 border-yellow-400"
-                                    : item.value === "plus"
-                                    ? "bg-green-300 border-green-400"
-                                    : item.value === "elite"
-                                    ? "bg-green-600 border-green-700"
-                                    : "bg-red-300 border-red-400 blink"
-                            } border-2`}
-                        ></div>
-                        <p className="mt-2 text-xs font-medium text-gray-700">
-                            Day {item.day}
-                        </p>
-                    </div>
-                ))}
-            </div>
+            <HabitGrid recordsArray={recordsArray} today={today} />
 
             <div className="mt-10">
                 <h2>Weekly Score card : 1 - 7 </h2>
