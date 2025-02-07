@@ -25,15 +25,15 @@ const FeatureCard = ({
             className="bg-[hsl(229,84%,5%)] rounded-2xl p-6 flex flex-col items-center text-center group relative overflow-hidden border-2 border-[hsl(229,50%,20%)] hover:border-[hsl(229,50%,30%)] shadow-[0_0_15px_rgba(0,0,0,0.2),0_0_3px_rgba(0,0,0,0.1)] hover:shadow-[0_0_25px_rgba(0,0,0,0.3),0_0_5px_rgba(0,0,0,0.2)] transition-[border-color,box-shadow] duration-300"
         >
             <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-primary/40 via-transparent to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                className="absolute inset-0 bg-gradient-to-br from-[hsl(252,100%,69%)]/40 via-transparent to-[hsl(12,90%,65%)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 initial={false}
             />
             <motion.div
-                className="mb-6 p-3 rounded-xl bg-orange-500 bg-opacity-10 relative"
+                className="mb-6 p-3 rounded-xl bg-[hsl(12,90%,65%)]/10 relative"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.5 }}
             >
-                <Icon className="w-8 h-8 text-orange-500" />
+                <Icon className="w-8 h-8 text-[hsl(12,90%,65%)]" />
             </motion.div>
             <h3 className="text-xl font-semibold mb-3 text-[hsl(210,40%,98%)] relative">
                 {title}

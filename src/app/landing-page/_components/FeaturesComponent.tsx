@@ -75,7 +75,7 @@ const FeaturesComponent = () => {
                 height={1000}
                 priority={false}
             />
-            <div className="absolute inset-0 w-full h-full bg-black-/20 z-10">
+            <div className="absolute inset-0 w-full h-full bg-black/20 z-10">
                 <ExampleTextScroll />
             </div>
 
@@ -86,10 +86,10 @@ const FeaturesComponent = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent relative">
+                    <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-[hsl(252,100%,69%)] to-[hsl(12,90%,65%)] bg-clip-text text-transparent relative">
                         Why Choose Grow Habit?
                         <motion.div
-                            className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 blur-lg opacity-0"
+                            className="absolute -inset-1 bg-gradient-to-r from-[hsl(252,100%,69%)]/20 to-[hsl(12,90%,65%)]/20 blur-lg opacity-0"
                             animate={{
                                 opacity: [0, 1, 0],
                                 transition: { duration: 2, repeat: Infinity },
