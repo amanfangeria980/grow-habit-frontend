@@ -3,9 +3,11 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const NavHeader = () => {
     const router = useRouter();
+    const queryClient = useQueryClient();
     return (
         <div className="flex justify-between items-center p-4">
             <button
@@ -35,6 +37,8 @@ const NavHeader = () => {
             <button
                 className="bg-red-500 rounded-md text-white p-1"
                 onClick={() => {
+                    queryClient.clear();
+                    localStorage.clear();
                     signOut();
                 }}
             >
