@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import SwipeButton from "@/components/swipeButton/swipeButton";
 import ExampleTextScroll from "@/components/infiniteTextScroll/example";
+import FeaturesComponent from "./_components/FeaturesComponent";
 
 const activityImages = {
     cycling:
@@ -168,8 +169,8 @@ export default function LandingPage() {
                 </BackgroundBeamsWithCollision>
             </div>
 
-            <div className="w-full mt-2">
-                <ExampleTextScroll />
+            <div className="w-full">
+                <FeaturesComponent />
             </div>
         </>
     );

@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
 import LoadingComponent from "@/components/loader/LoadingComponent";
-import useCurrentUser from "@/hooks/useCurrentUser";
 import { useQuery } from "@tanstack/react-query";
 
 const passwordSchema = z
