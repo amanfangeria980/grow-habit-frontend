@@ -13,39 +13,68 @@ import "@/styles/animations.css";
 import LoadingComponent from "@/components/loader/LoadingComponent";
 
 export default function UserHome() {
-    const [selectedName, setSelectedName] = useState<string>("parth");
+    const [selectedUser, setSelectedUser] = useState<any>({});
+    const [allUsers, setAllUsers] = useState<any>([]) ; 
     const router = useRouter();
+    
     const [recordsArray, setRecordsArray] = useState<
         Array<{ value: string; day: number }>
     >([]);
     const [loading, setLoading] = useState(true);
     const today = new Date().getDate();
-    const fetchAllUsers = ()=>{
+    
+   
+
+    const fetchUserData = async () => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${selectedUser.userId}`
+            );
+            const data = await response.json();
+            if (data.success) {
+                setRecordsArray(data.data);
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchAllUsers = async()=>{
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-all-users`, {method : "GET"})
+        const repData = await response.json() ; 
+        console.log("This is the data of the users fetched from the backend ", repData) ;
+        setAllUsers(repData.data) ; 
         
     }
-    let fetchUsers = []
 
 
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${selectedName}`
-                );
-                const data = await response.json();
-                if (data.success) {
-                    setRecordsArray(data.data);
-                }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
 
-        fetchUserData();
-    }, [selectedName]);
+        const fetchDetails = async()=>{
+            await fetchAllUsers() ; 
+            
+
+        }
+
+        fetchDetails() ; 
+        
+
+        
+
+        
+    }, []);
+
+    useEffect(()=>{
+        const fetchDetails = async()=>{
+            await fetchUserData() ; 
+        }
+
+        fetchDetails() ; 
+    }, [selectedUser])
 
     if (loading) {
         return <LoadingComponent />;
@@ -56,16 +85,16 @@ export default function UserHome() {
             <div className="p-4 bg-gray-100 min-h-screen">
                 <div className="mb-6">
                     <Select
-                        value={selectedName}
-                        onValueChange={(value) => setSelectedName(value)}
+                        value={selectedUser}
+                        onValueChange={(value) => setSelectedUser(value)}
                     >
                         <SelectTrigger className="w-full bg-white rounded-lg py-3 px-4 text-left text-gray-600 flex justify-between items-center shadow-xl h-12">
                             <SelectValue placeholder="Select name" />
                         </SelectTrigger>
                         <SelectContent className="bg-white">
-                            {usersAll.map((user, index) => (
-                                <SelectItem key={index} value={user}>
-                                    {user}
+                            {allUsers.map((user : any) => (
+                                <SelectItem key={user.userId} value={user}>
+                                    {user.userName}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -74,11 +103,18 @@ export default function UserHome() {
 
                 <div className="text-center mb-4">
                     <h1 className="text-xl font-semibold">
-                        Hi, {selectedName}
+                        Hi, {selectedUser.userName || "Select User"}
                     </h1>
                     <p className="text-gray-600 mt-2">
                         Your two-pointer status for today is:
                     </p>
+                </div>
+
+                <div>
+                    <h2>The value of fetched users</h2>
+                    {
+                        JSON.stringify(allUsers) 
+                    }
                 </div>
 
                 <div className="grid grid-cols-5 gap-4 justify-center max-w-3xl mx-auto">

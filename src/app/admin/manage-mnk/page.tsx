@@ -87,14 +87,18 @@ export default function Page() {
   const fetchMNKUsers = async()=>{
     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-mnk-users`, {method : "GET"})
     const repData = await response.json() ; 
-    setMNKUsers(repData.data) ; 
+    setMNKUsers(repData.data || []) ; 
     console.log("The value of users from backend is", repData)
   }
 
   useEffect(() => {
-    fetchMNKGroups();
+    
     fetchMNKUsers() ; 
   }, []);
+
+  useEffect(()=>{
+    fetchMNKGroups() ; 
+  },[mnkGroups])
   return (
     <>
   <div className="flex justify-evenly gap-2">
@@ -151,7 +155,7 @@ export default function Page() {
               JSON.stringify(mnkGroups)
             } */}
           <CardHeader>All MNK Groups</CardHeader>
-          {mnkGroups.length > 0 &&
+          {(mnkGroups && mnkGroups.length > 0 ) &&
             mnkGroups.map((group: any, index: number) => {
               return (
                 <div key={index}>
@@ -244,6 +248,13 @@ function GroupCardDetails({openMNKDetails, setOpenMNKDetails} : { openMNKDetails
   console.log("This is the value of the users ", users) ; 
 
 
+  const removeMNK = (userId : string, mnkId : string)=>{
+    // working on this 
+    // parameters would be the userId and the MNKId 
+    // process => I'll have to remove it from users array of MNK and from the users => I need to remove it from the mnk field 
+  }
+
+
 
 
 
@@ -263,6 +274,11 @@ function GroupCardDetails({openMNKDetails, setOpenMNKDetails} : { openMNKDetails
       <CardHeader>
         <CardTitle> Members </CardTitle>
       </CardHeader>
+      <div>
+        {
+          JSON.stringify(openMNKDetails)
+        }
+      </div>
       <CardContent>
       {
 
@@ -275,7 +291,7 @@ function GroupCardDetails({openMNKDetails, setOpenMNKDetails} : { openMNKDetails
 
               <h2>{user.name}</h2>
 
-              <Button size={"sm"} >Remove</Button>
+              <Button size={"sm"} onClick={()=>{}} >Remove</Button>
 
             </div>
           )
