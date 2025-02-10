@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { usersAll } from "@/lib/data";
 import { useRouter } from "next/navigation";
 import {
     Select,
@@ -11,24 +10,31 @@ import {
 } from "@/components/ui/select";
 import "@/styles/animations.css";
 import LoadingComponent from "@/components/loader/LoadingComponent";
+import { useUserFromTanstack } from "@/hooks/useUserFromTanstack";
+import { HabitGrid } from "./_components/HabitGrid";
 
 export default function UserHome() {
-    const [selectedUser, setSelectedUser] = useState<any>({});
-    const [allUsers, setAllUsers] = useState<any>([]) ; 
+    const user = useUserFromTanstack();
+    const [selectedUser, setSelectedUser] = useState<string>("parth");
+    const [allUsers, setAllUsers] = useState<any>([]);
+    // Add new useEffect to update selectedName when user data changes
+    useEffect(() => {
+        if (user?.name) {
+            setSelectedUser(user.name.split(" ")[0].toLowerCase());
+        }
+    }, [user?.name]);
     const router = useRouter();
-    
+
     const [recordsArray, setRecordsArray] = useState<
         Array<{ value: string; day: number }>
     >([]);
     const [loading, setLoading] = useState(true);
     const today = new Date().getDate();
-    
-   
 
     const fetchUserData = async () => {
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${selectedUser.userId}`
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${user?.id}`
             );
             const data = await response.json();
             if (data.success) {
@@ -41,40 +47,34 @@ export default function UserHome() {
         }
     };
 
-    const fetchAllUsers = async()=>{
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-all-users`, {method : "GET"})
-        const repData = await response.json() ; 
-        console.log("This is the data of the users fetched from the backend ", repData) ;
-        setAllUsers(repData.data) ; 
-        
-    }
-
-
+    const fetchAllUsers = async () => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-all-users`,
+            { method: "GET" }
+        );
+        const repData = await response.json();
+        console.log(
+            "This is the data of the users fetched from the backend ",
+            repData
+        );
+        setAllUsers(repData.data);
+    };
 
     useEffect(() => {
+        const fetchDetails = async () => {
+            await fetchAllUsers();
+        };
 
-        const fetchDetails = async()=>{
-            await fetchAllUsers() ; 
-            
-
-        }
-
-        fetchDetails() ; 
-        
-
-        
-
-        
+        fetchDetails();
     }, []);
 
-    useEffect(()=>{
-        const fetchDetails = async()=>{
-            await fetchUserData() ; 
-        }
+    useEffect(() => {
+        const fetchDetails = async () => {
+            await fetchUserData();
+        };
 
-        fetchDetails() ; 
-    }, [selectedUser])
+        fetchDetails();
+    }, [selectedUser]);
 
     if (loading) {
         return <LoadingComponent />;
@@ -92,7 +92,7 @@ export default function UserHome() {
                             <SelectValue placeholder="Select name" />
                         </SelectTrigger>
                         <SelectContent className="bg-white">
-                            {allUsers.map((user : any) => (
+                            {allUsers.map((user: any) => (
                                 <SelectItem key={user.userId} value={user}>
                                     {user.userName}
                                 </SelectItem>
@@ -103,59 +103,14 @@ export default function UserHome() {
 
                 <div className="text-center mb-4">
                     <h1 className="text-xl font-semibold">
-                        Hi, {selectedUser.userName || "Select User"}
+                        Hi, {selectedUser || "Select User"}
                     </h1>
                     <p className="text-gray-600 mt-2">
                         Your two-pointer status for today is:
                     </p>
                 </div>
 
-                <div>
-                    <h2>The value of fetched users</h2>
-                    {
-                        JSON.stringify(allUsers) 
-                    }
-                </div>
-
-                <div className="grid grid-cols-5 gap-4 justify-center max-w-3xl mx-auto">
-                    {recordsArray.map((item) => {
-                        // console.log("item : ", item)
-
-                        return (
-                            <div
-                                key={item.day}
-                                className="flex flex-col items-center p-2"
-                            >
-                                <div
-                                    onClick={() => {
-                                        if (
-                                            item.value === "undefined" &&
-                                            item.day <= today
-                                        ) {
-                                            router.push("/reflection-form");
-                                        }
-                                    }}
-                                    className={`w-8 h-8 rounded-md ${
-                                        item.day >= today
-                                            ? "bg-slate-200 border-slate-300"
-                                            : item.value === "no"
-                                            ? "bg-black border-slate-300"
-                                            : item.value === "gateway"
-                                            ? "bg-yellow-300 border-yellow-400"
-                                            : item.value === "plus"
-                                            ? "bg-green-300 border-green-400"
-                                            : item.value === "elite"
-                                            ? "bg-green-600 border-green-700"
-                                            : "bg-red-300 border-red-400 blink"
-                                    } border-2`}
-                                ></div>
-                                <p className="mt-2 text-xs font-medium text-gray-700">
-                                    Day {item.day}
-                                </p>
-                            </div>
-                        );
-                    })}
-                </div>
+                <HabitGrid recordsArray={recordsArray} today={today} />
 
                 <div className="mt-10">
                     <h2>Weekly Score card : 1 - 7 </h2>
