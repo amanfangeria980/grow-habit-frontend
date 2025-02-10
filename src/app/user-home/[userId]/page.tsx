@@ -8,6 +8,8 @@ async function UserHomePage() {
     console.log("The value of the user from the backend is ", auth?.user) ; 
     // const name = auth?.user?.name?.split(" ")[0].toLowerCase();
     const userId = auth?.user?.id ; 
+   
+   
     if (!auth?.user) {
         redirect("/login");
     }
@@ -73,6 +75,7 @@ async function UserHomePage() {
     
 
     return (
+       
         <div className="p-4 bg-gray-100 min-h-screen">
             <div className="text-center mb-4">
                 <h1 className="text-xl font-semibold">Hi, {auth.user.name}</h1>

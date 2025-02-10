@@ -271,14 +271,11 @@ function GroupCardDetails({openMNKDetails, setOpenMNKDetails} : { openMNKDetails
       
 
       <Card className="mx-2 my-2">
-      <CardHeader>
+      <CardHeader className="flex justify-around">
         <CardTitle> Members </CardTitle>
+        <Button size={"sm"} className="bg-red-500">Invite Members</Button>
       </CardHeader>
-      <div>
-        {
-          JSON.stringify(openMNKDetails)
-        }
-      </div>
+      
       <CardContent>
       {
 
@@ -291,7 +288,7 @@ function GroupCardDetails({openMNKDetails, setOpenMNKDetails} : { openMNKDetails
 
               <h2>{user.name}</h2>
 
-              <Button size={"sm"} onClick={()=>{}} >Remove</Button>
+              <Button className="bg-red-500" size={"sm"} onClick={()=>{}} >Remove</Button>
 
             </div>
           )
@@ -304,6 +301,7 @@ function GroupCardDetails({openMNKDetails, setOpenMNKDetails} : { openMNKDetails
 
       </Card>
       <Button onClick={()=>{setOpenMNKDetails(null)}}>Close Details</Button>
+      <Button className="mx-2 bg-red-500">Delete Group</Button>
       
     </div>
   )
