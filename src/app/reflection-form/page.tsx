@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Router } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -23,17 +23,15 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usersAll } from "@/lib/data";
 import { useRouter } from "next/navigation";
-import useCurrentUser from "@/hooks/useCurrentUser";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import LoadingComponent from "@/components/loader/LoadingComponent";
 
 const formSchema = z.object({
     name: z.string().min(1, "Please select your name"),
     commitment: z.string().min(1, "Please select your commitment status"),
     date: z.date({
         required_error: "Please select a date",
-    }),
-    day: z.number({
-        required_error: "Please tell the day",
     }),
     comradeConnection: z.string().min(1, "Please select your connection type"),
     cuePerformance: z.enum(["yes", "no"], {
@@ -50,36 +48,40 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const ReflectionForm = () => {
-    const user = useCurrentUser();
-    const name = user?.name?.split(" ")[0].toLowerCase();
+    const queryClient = useQueryClient();
+    const user = queryClient.getQueryData<{
+        id: string;
+        name: string;
+        email: string;
+        role: string;
+    }>(["user"]);
     //@ts-ignore
-    const role = user?.role;
-    const [successFlag, setSuccessFlag] = useState<boolean>(false);
     const router = useRouter();
     const today = new Date();
-    const dayOfMonth = today.getDate();
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: name,
+            name: "",
             commitment: "",
             comradeConnection: "",
             cuePerformance: "no",
             reflection: "",
-            day: dayOfMonth,
             timestamp: today,
         },
     });
 
     const onSubmit = async (data: FormValues) => {
         try {
+            // Create a new object without the date property
+            const { date, ...dataWithoutDate } = data;
+
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/reflect`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        ...data,
+                        ...dataWithoutDate,
                         timestamp: new Date(),
                         userId: user?.id,
                         testMonth: new Date().getMonth() + 1,
@@ -135,8 +137,6 @@ const ReflectionForm = () => {
                             onValueChange={(value) =>
                                 form.setValue("name", value)
                             }
-                            defaultValue={name}
-                            disabled={role === "admin" ? false : true}
                         >
                             <SelectTrigger className="w-full bg-white rounded-lg py-3 px-4 text-left text-gray-600 flex justify-between items-center shadow-xl h-12">
                                 <SelectValue
@@ -238,7 +238,6 @@ const ReflectionForm = () => {
                                                 "testDay",
                                                 date.getDate()
                                             );
-                                            console.log(date.getDate());
                                         }
                                     }}
                                     initialFocus
@@ -387,7 +386,7 @@ const ReflectionForm = () => {
                     </Button>
                     <Button
                         type="submit"
-                        className="flex-1 bg-primary text-white rounded-lg py-3 px-4 h-12"
+                        className="flex-1 bg-yellow-500 text-white rounded-lg py-3 px-4 h-12"
                     >
                         Save Progress
                     </Button>

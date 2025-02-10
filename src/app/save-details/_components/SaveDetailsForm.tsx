@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
 import LoadingComponent from "@/components/loader/LoadingComponent";
+import { useQuery } from "@tanstack/react-query";
 
 const passwordSchema = z
     .string()
@@ -38,6 +39,16 @@ const SaveDetailsPage = ({ email }: { email: string }) => {
     const [password, setPassword] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [phoneNumberError, setPhoneNumberError] = useState("");
+    useQuery({
+        queryKey: ["user"],
+        queryFn: async () => {
+            const session = await fetch("/api/auth/session");
+            const data = await session.json();
+            if (!data.user) return null;
+            return data.user;
+        },
+        staleTime: Infinity,
+    });
 
     const fetchPassword = async () => {
         try {
