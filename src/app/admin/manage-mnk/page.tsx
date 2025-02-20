@@ -91,6 +91,8 @@ export default function Page() {
     console.log("The value of users from backend is", repData)
   }
 
+  
+
   useEffect(() => {
     
     fetchMNKUsers() ; 
@@ -98,7 +100,7 @@ export default function Page() {
 
   useEffect(()=>{
     fetchMNKGroups() ; 
-  },[mnkGroups])
+  },[])
   return (
     <>
   <div className="flex justify-evenly gap-2">
@@ -248,10 +250,35 @@ function GroupCardDetails({openMNKDetails, setOpenMNKDetails} : { openMNKDetails
   console.log("This is the value of the users ", users) ; 
 
 
-  const removeMNK = (userId : string, mnkId : string)=>{
+  const removeFromMNK = async(userId : string, mnkId : string)=>{
     // working on this 
     // parameters would be the userId and the MNKId 
     // process => I'll have to remove it from users array of MNK and from the users => I need to remove it from the mnk field 
+    const sendData = {
+      userId : userId, 
+      mnkId : mnkId
+    }
+
+    try{
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/remove-from-mnk`, { method : "POST", headers : {'Content-Type' : 'application/json'}, body : JSON.stringify(sendData)})
+      const repData = await response.json() ; 
+      console.log("This is the value of repData from removeFromMNK", repData) ; 
+
+    }
+    catch(error : any)
+    {
+      console.log("There is an error at removeFromMNK", error.message) ; 
+
+    }
+
+    
+  }
+
+  const deleteMNK = async(mnkId : string)=>{
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/delete-mnk-group`,{method : "POST", headers : {'Content-Type' : 'application/json'}, body : JSON.stringify({mnkId : mnkId})}) ; 
+    const repData = await response.json() ; 
+    console.log("This is the repData value from deleteMNK", repData) ; 
   }
 
 
@@ -268,6 +295,8 @@ function GroupCardDetails({openMNKDetails, setOpenMNKDetails} : { openMNKDetails
           <CardTitle className="text-center"><h2>{openMNKDetails.name}</h2></CardTitle>
         </CardHeader>
       </Card>
+
+      {JSON.stringify(openMNKDetails)}
       
 
       <Card className="mx-2 my-2">
@@ -288,7 +317,7 @@ function GroupCardDetails({openMNKDetails, setOpenMNKDetails} : { openMNKDetails
 
               <h2>{user.name}</h2>
 
-              <Button className="bg-red-500" size={"sm"} onClick={()=>{}} >Remove</Button>
+              <Button className="bg-red-500" size={"sm"} onClick={()=>{removeFromMNK(user.userId, openMNKDetails.id)}} >Remove</Button>
 
             </div>
           )
@@ -301,7 +330,7 @@ function GroupCardDetails({openMNKDetails, setOpenMNKDetails} : { openMNKDetails
 
       </Card>
       <Button onClick={()=>{setOpenMNKDetails(null)}}>Close Details</Button>
-      <Button className="mx-2 bg-red-500">Delete Group</Button>
+      <Button className="mx-2 bg-red-500" onClick={()=>{deleteMNK(openMNKDetails.id)}}>Delete Group</Button>
       
     </div>
   )

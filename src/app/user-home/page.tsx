@@ -15,12 +15,12 @@ import { HabitGrid } from "./_components/HabitGrid";
 
 export default function UserHome() {
     const user = useUserFromTanstack();
-    const [selectedUser, setSelectedUser] = useState<string>("parth");
+    const [selectedUser, setSelectedUser] = useState<Record<string, string>>({});
     const [allUsers, setAllUsers] = useState<any>([]);
     // Add new useEffect to update selectedName when user data changes
     useEffect(() => {
         if (user?.name) {
-            setSelectedUser(user.name.split(" ")[0].toLowerCase());
+            setSelectedUser({userId : user.id, userName : user.name});
         }
     }, [user?.name]);
     const router = useRouter();
@@ -34,7 +34,7 @@ export default function UserHome() {
     const fetchUserData = async () => {
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${user?.id}`
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${selectedUser.userId}`
             );
             const data = await response.json();
             if (data.success) {
@@ -73,6 +73,8 @@ export default function UserHome() {
             await fetchUserData();
         };
 
+       
+
         fetchDetails();
     }, [selectedUser]);
 
@@ -84,16 +86,22 @@ export default function UserHome() {
         <>
             <div className="p-4 bg-gray-100 min-h-screen">
                 <div className="mb-6">
+                
                     <Select
-                        value={selectedUser}
-                        onValueChange={(value) => setSelectedUser(value)}
+                        value={selectedUser.userId}
+                        onValueChange={(value) => { 
+                            const selected = allUsers.find((u : any)=>(u.userId === value))
+                            setSelectedUser(selected) 
+                        
+                        
+                        } }
                     >
                         <SelectTrigger className="w-full bg-white rounded-lg py-3 px-4 text-left text-gray-600 flex justify-between items-center shadow-xl h-12">
                             <SelectValue placeholder="Select name" />
                         </SelectTrigger>
                         <SelectContent className="bg-white">
                             {allUsers.map((user: any) => (
-                                <SelectItem key={user.userId} value={user}>
+                                <SelectItem key={user.userId} value={user.userId}>
                                     {user.userName}
                                 </SelectItem>
                             ))}
@@ -103,7 +111,7 @@ export default function UserHome() {
 
                 <div className="text-center mb-4">
                     <h1 className="text-xl font-semibold">
-                        Hi, {selectedUser || "Select User"}
+                        Hi, {selectedUser.userName || "Select User"}
                     </h1>
                     <p className="text-gray-600 mt-2">
                         Your two-pointer status for today is:
