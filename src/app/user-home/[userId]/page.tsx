@@ -6,6 +6,7 @@ import { HabitGrid } from "../_components/HabitGrid";
 
 async function UserHomePage() {
     const auth = await getSession();
+    let flag = true ; 
     console.log("The value of the user from the backend is ", auth?.user);
     // const name = auth?.user?.name?.split(" ")[0].toLowerCase();
     const userId = auth?.user?.id;
