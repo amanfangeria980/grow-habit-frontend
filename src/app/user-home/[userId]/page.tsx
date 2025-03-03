@@ -1,8 +1,12 @@
 import { getSession } from "@/lib/getSession";
 import { redirect } from "next/navigation";
-import "@/styles/animations.css";
 import { Card } from "@/components/ui/card";
-import { HabitGrid } from "../_components/HabitGrid";
+import "@/styles/animations.css";
+
+import { HabitGrid, NoHabitComp } from "../_components/HabitGrid";
+
+
+
 
 async function UserHomePage() {
     const auth = await getSession();
@@ -14,6 +18,19 @@ async function UserHomePage() {
     if (!auth?.user) {
         redirect("/login");
     }
+
+    const fetchUserDetails = async()=>{
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-user-details`, {method : "POST", headers : {'Content-Type' : 'application/json'}, body : JSON.stringify({userId : userId})})
+        const repData = await response.json() ; 
+        console.log("The user details are as follows", repData.data) ; 
+
+        return repData.data ; 
+
+    }
+
+    const userDetails = await fetchUserDetails() ; 
+
+    
 
     const today = new Date().getDate();
 
@@ -61,6 +78,13 @@ async function UserHomePage() {
         console.log("This is the value of reflection rate ", reflectionRate);
     }
 
+    if(userDetails.primaryHabit === null)
+        {
+            return(
+                <NoHabitComp userDetails={userDetails} auth={auth}/>
+            )
+        }
+
     return (
         <div className="p-4 bg-gray-100 min-h-screen">
             <div className="text-center mb-4">
@@ -100,5 +124,7 @@ async function UserHomePage() {
         </div>
     );
 }
+
+
 
 export default UserHomePage;

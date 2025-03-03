@@ -18,10 +18,7 @@ import { Button } from "@/components/ui/button";
 import { queryObjects } from "v8";
 
 // let's try to create a mainUserDetails 
-interface mainUserDetails{
 
-
-}
 
 export default function UserHome() {
     const user = useUserFromTanstack();
