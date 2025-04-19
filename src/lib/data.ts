@@ -1,11 +1,23 @@
+import { SelectUserProps } from "@/components/SelectUserInput";
 export const usersAll: string[] = [
     "parth",
     "deepika",
     "kavya",
-    "rashmi",
-    "govindraju",
-    "aditya",
     "testuser",
-    "aman",
-    "madhavi",
 ];
+
+
+export const mnkUsersAll: SelectUserProps[] = [
+    {
+        name : "deepika", 
+        id : "AqUfOlNV-V3NXO_1CV9vN"
+    }, 
+    {
+        name : "parth", 
+        id : "CZpcvqxjcKFbWDawCMzIo"
+    },
+    {
+        name : "kavya", 
+        id : "ZW7gdfFwmbpU17wHMK3E3"
+    }
+]
