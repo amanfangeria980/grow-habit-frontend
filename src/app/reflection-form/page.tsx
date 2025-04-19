@@ -21,11 +21,11 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usersAll } from "@/lib/data";
+import { mnkUsersAll } from "@/lib/data";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import LoadingComponent from "@/components/loader/LoadingComponent";
+import { SelectUserInput } from "@/components/SelectUserInput";
 
 const formSchema = z.object({
     name: z.string().min(1, "Please select your name"),
@@ -43,10 +43,10 @@ const formSchema = z.object({
             "Please give the exact date and time of filling the form",
     }),
     testDay: z.number(),
+    userId: z.string()
 });
 
-type FormValues = z.infer<typeof formSchema>;
-
+export type FormValues = z.infer<typeof formSchema>;
 const ReflectionForm = () => {
     const queryClient = useQueryClient();
     const user = queryClient.getQueryData<{
@@ -67,6 +67,7 @@ const ReflectionForm = () => {
             cuePerformance: "no",
             reflection: "",
             timestamp: today,
+            userId: ""
         },
     });
 
@@ -83,7 +84,6 @@ const ReflectionForm = () => {
                     body: JSON.stringify({
                         ...dataWithoutDate,
                         timestamp: new Date(),
-                        userId: user?.id,
                         testMonth: new Date().getMonth() + 1,
                         testYear: new Date().getFullYear(),
                         deletedAt: null,
@@ -132,7 +132,7 @@ const ReflectionForm = () => {
 
                 <div className="bg-gray min-h-36 p-6 rounded-3xl mt-5">
                     <h3 className="text-xl text-text-100 mb-4">Who are you?</h3>
-                    <div>
+                    {/* <div>
                         <Select
                             onValueChange={(value) =>
                                 form.setValue("name", value)
@@ -162,7 +162,8 @@ const ReflectionForm = () => {
                                 {form.formState.errors.name.message}
                             </p>
                         )}
-                    </div>
+                    </div> */}
+                    <SelectUserInput form={form} usersAll={mnkUsersAll}/>
                 </div>
                 {/* first question */}
                 <div className="bg-gray min-h-36 p-6 rounded-3xl mt-5">
