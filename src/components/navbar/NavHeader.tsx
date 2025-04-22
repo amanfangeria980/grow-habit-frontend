@@ -9,9 +9,9 @@ const NavHeader = () => {
     const router = useRouter();
     const queryClient = useQueryClient();
     return (
-        <div className="flex justify-between items-center p-4">
+        <div className="flex justify-between items-center p-4 bg-white">
             <button
-                className="bg-blue-500 rounded-md text-white p-1"
+                className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
                 onClick={() => {
                     router.push("/user-home");
                 }}
@@ -19,7 +19,7 @@ const NavHeader = () => {
                 All Stats
             </button>
             <button
-                className="bg-green-500 rounded-md text-white p-1"
+                className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
                 onClick={() => {
                     router.push("/user-home/me");
                 }}
@@ -27,7 +27,7 @@ const NavHeader = () => {
                 My Stats
             </button>
             <button
-                className="bg-yellow-500 rounded-md text-white p-1"
+                className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
                 onClick={() => {
                     router.push("/reflection-form");
                 }}
@@ -35,7 +35,7 @@ const NavHeader = () => {
                 Form
             </button>
             <button
-                className="bg-red-500 rounded-md text-white p-1"
+                className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg transition-colors duration-200"
                 onClick={() => {
                     queryClient.clear();
                     localStorage.clear();
