@@ -24,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usersAll } from "@/lib/data";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import LoadingComponent from "@/components/loader/LoadingComponent";
 
 const formSchema = z.object({
@@ -49,12 +49,16 @@ type FormValues = z.infer<typeof formSchema>;
 
 const ReflectionForm = () => {
     const queryClient = useQueryClient();
-    const user = queryClient.getQueryData<{
-        id: string;
-        name: string;
-        email: string;
-        role: string;
-    }>(["user"]);
+    const { data: user } = useQuery({
+        queryKey: ["user"],
+        queryFn: async () => {
+            const session = await fetch("/api/auth/session");
+            const data = await session.json();
+            if (!data.user) return null;
+            return data.user;
+        },
+        staleTime: Infinity,
+    });
     //@ts-ignore
     const router = useRouter();
     const today = new Date();
