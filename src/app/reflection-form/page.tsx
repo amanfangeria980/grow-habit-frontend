@@ -23,9 +23,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usersAll } from "@/lib/data";
 import { useRouter } from "next/navigation";
-import useCurrentUser from "@/hooks/useCurrentUser";
 import { toast } from "sonner";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import LoadingComponent from "@/components/loader/LoadingComponent";
 
 const formSchema = z.object({
@@ -49,35 +48,20 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const ReflectionForm = () => {
-
-    const [name, setName] = useState<string>("")
-    
-    const { data: user, isLoading } = useQuery<{
-        name: string;
-        role: string;
-        email: string;
-        id: string;
-    } | null>({
+    const queryClient = useQueryClient();
+    const { data: user } = useQuery({
         queryKey: ["user"],
         queryFn: async () => {
             const session = await fetch("/api/auth/session");
             const data = await session.json();
             if (!data.user) return null;
-
-
-            return {
-                name: data.user.name,
-                role: data.user.role,
-                email: data.user.email,
-                id: data.user.id,
-            };
+            return data.user;
         },
         staleTime: Infinity,
     });
     //@ts-ignore
     const router = useRouter();
     const today = new Date();
-    const dayOfMonth = today.getDate();
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -137,9 +121,6 @@ const ReflectionForm = () => {
             });
         }
     };
-    if (isLoading) {
-        return <LoadingComponent />;
-    }
 
     return (
         <>
@@ -412,7 +393,7 @@ const ReflectionForm = () => {
                     </Button>
                     <Button
                         type="submit"
-                        className="flex-1 bg-primary text-white rounded-lg py-3 px-4 h-12"
+                        className="flex-1 bg-yellow-500 text-white rounded-lg py-3 px-4 h-12"
                     >
                         Save Progress
                     </Button>

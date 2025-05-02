@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 interface Reflection {
     id: string;
     timestamp: string;
@@ -9,15 +9,18 @@ interface Reflection {
     day: number;
     commitment: string;
     testDay: number;
+    reflection: string;
 }
 
 export default function Page() {
     const [reflections, setReflections] = useState<Reflection[]>([]);
+    const [filterReflections, setFilterReflections] = useState<Reflection[]>([]); 
     const [loading, setLoading] = useState<boolean>(true);
     const [editFlag, setEditFlag] = useState<string | null>(null);
     const [editDayValue, setEditDayValue] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
     const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
+    const [filterText, setFilterText] = useState<string>("") ; 
 
     const formatTimestamp = (timestamp: string) => {
         const date = new Date(timestamp);
@@ -53,6 +56,36 @@ export default function Page() {
         return `${formattedDate} | ${formattedTime}`;
     };
 
+    const updateFilteredReflections = async()=>{
+
+        await updateReflections()
+        const searchValue = filterText ; 
+        const reflectionsValue = reflections; 
+        let tempReflections:Reflection[] = []
+
+        if(searchValue === "")
+        {
+            return ; 
+        }
+
+        if(reflectionsValue.length < 1)
+        {
+            return ; 
+        }
+
+        reflectionsValue.map((reflection : any)=>{
+            if(reflection.name === searchValue){
+
+                tempReflections.push(reflection);
+
+            }
+        })
+
+        setFilterReflections(tempReflections) ; 
+
+        
+    }
+
     const updateReflections = async () => {
         try {
             const response = await fetch(
@@ -63,6 +96,7 @@ export default function Page() {
             }
             const repData = await response.json();
             setReflections(repData.data);
+            setFilterReflections(repData.data); 
         } catch (error) {
             setError("Failed to fetch reflections");
             console.error("Error fetching reflections:", error);
@@ -87,7 +121,7 @@ export default function Page() {
             const repData = await response.json();
             setDeleteMessage(repData.message);
             // Refresh reflections after successful delete
-            updateReflections();
+            updateFilteredReflections(); 
         } catch (error) {
             setError("Failed to delete reflection");
             console.error("Error deleting reflection:", error);
@@ -143,7 +177,14 @@ export default function Page() {
 
     useEffect(() => {
         updateReflections();
+      
     }, []);
+
+    // useEffect(()=>{
+
+    //     updateFilteredReflections(); 
+
+    // },[filterText])
 
     const TdComp = ({
         children,
@@ -169,11 +210,27 @@ export default function Page() {
 
     return (
         <>
-            <div>This is the form reflections page</div>
-            <div className="flex justify-center">
+            <div className="absolute top-30 right-2  flex gap-2">
+
+                <input type="text" value={filterText} onChange={(e)=>{setFilterText(e.target.value)}} placeholder="filter by id or name" className="border-2 border-black px-2 py-1 rounded-md" />
+                <button className="bg-black px-2 py-1 text-white rounded-md" onClick={()=>{updateFilteredReflections()}}>Filter</button>
+
+
+                
+
+
+
+
+
+            </div>
+
+            <div>
+            </div>
+            <div className="flex justify-start pl-36 mt-5">
                 <table className="border-2 border-black">
                     <thead>
                         <tr>
+                            
                             <th className="border-2 border-black px-4 py-2 min-w-[200px]">
                                 Timestamp
                             </th>
@@ -193,10 +250,11 @@ export default function Page() {
                             <th className="border-2 border-black px-4 py-2">
                                 Delete
                             </th>
+                            <th className="border-2 border-black px-4 py-2">Reflection</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {reflections.map((ref) => (
+                        {filterReflections.map((ref) => (
                             <tr key={ref.id}>
                                 <TdComp>
                                     {formatTimestamp(ref.timestamp)}
@@ -255,6 +313,18 @@ export default function Page() {
                                     >
                                         Delete
                                     </button>
+                                </TdComp>
+                                <TdComp >
+                                   
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger className="bg-black text-white rounded-md px-3 py-1">
+                                            Open
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="border border-black p-2 text-sm max-w-80 shadow-lg">
+                                            {ref.reflection}
+                                        </DropdownMenuContent>
+
+                                    </DropdownMenu>
                                 </TdComp>
                             </tr>
                         ))}
