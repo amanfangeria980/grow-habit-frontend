@@ -1,7 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { usersAll } from "@/lib/data";
-import { useRouter } from "next/navigation";
 import {
     Select,
     SelectContent,
@@ -11,30 +9,30 @@ import {
 } from "@/components/ui/select";
 import "@/styles/animations.css";
 import LoadingComponent from "@/components/loader/LoadingComponent";
-import { useUserFromTanstack } from "@/hooks/useUserFromTanstack";
 import { HabitGrid } from "./_components/HabitGrid";
 import { useSession } from "next-auth/react";
 import NoMNKGroupScreen from "./_components/NoMNKGroupScreen";
 
 export default function UserHome() {
-    // const user = useUserFromTanstack();
     const { data: authData } = useSession();
-    const [selectedName, setSelectedName] = useState<string>("parth");
+    const [selectedUserId, setSelectedUserId] = useState<string>("");
     const [recordsArray, setRecordsArray] = useState<
         Array<{ value: string; day: number }>
     >([]);
     const [loading, setLoading] = useState(true);
     const [userDetails, setUserDetails] = useState<any>(null);
     const today = new Date().getDate();
+    const [mnkUsers, setMnkUsers] = useState<any[]>([]);
 
     const fetchUserDetails = async () => {
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-user-details/${authData?.user?.id}`
             );
-            const data = await response.json();
-            if (data.user) {
-                setUserDetails(data.user);
+            const userData = await response.json();
+            if (userData.data) {
+                setUserDetails(userData.data);
+                setSelectedUserId(userData.data.id);
             }
         } catch (error) {
             console.error("Error fetching user details:", error);
@@ -43,11 +41,58 @@ export default function UserHome() {
         }
     };
 
+    const getMNKUsers = async () => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-mnk-users/${userDetails?.mnk?.mnkId}`
+            );
+            const mnkUsersData = await response.json();
+            if (mnkUsersData.success) {
+                setMnkUsers(mnkUsersData.data);
+            } else {
+                console.error(
+                    "Failed to fetch MNK users:",
+                    mnkUsersData.message
+                );
+            }
+        } catch (error) {
+            console.error("Error fetching mnk users:", error);
+        }
+    };
+
+    const fetchUserGraph = async (userId: string) => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${userId}`
+            );
+            const data = await response.json();
+            if (data.success) {
+                setRecordsArray(data.data);
+            } else {
+                console.error("Failed to fetch user graph:", data.message);
+            }
+        } catch (error) {
+            console.error("Error fetching user graph:", error);
+        }
+    };
+
     useEffect(() => {
         if (authData?.user?.id) {
             fetchUserDetails();
         }
     }, [authData?.user?.id]);
+
+    useEffect(() => {
+        if (userDetails?.mnk) {
+            getMNKUsers();
+        }
+    }, [userDetails]);
+
+    useEffect(() => {
+        if (selectedUserId) {
+            fetchUserGraph(selectedUserId);
+        }
+    }, [selectedUserId]);
 
     // Add new useEffect to update selectedName when user data changes
     // useEffect(() => {
@@ -82,64 +127,61 @@ export default function UserHome() {
     if (loading) {
         return <LoadingComponent />;
     }
-    if (!userDetails?.mnk) {
-        return (
-            <>
-                <NoMNKGroupScreen />
-            </>
-        );
+    if (userDetails?.mnk === null) {
+        return <NoMNKGroupScreen />;
     }
-    // return (
-    //     <>
-    //         <div className="p-4 bg-gray-100 min-h-screen">
-    //             <div className="mb-6">
-    //                 <Select
-    //                     value={selectedName}
-    //                     onValueChange={(value) => setSelectedName(value)}
-    //                 >
-    //                     <SelectTrigger className="w-full bg-white rounded-lg py-3 px-4 text-left text-gray-600 flex justify-between items-center shadow-xl h-12">
-    //                         <SelectValue placeholder="Select name" />
-    //                     </SelectTrigger>
-    //                     <SelectContent className="bg-white">
-    //                         {usersAll.map((user, index) => (
-    //                             <SelectItem key={index} value={user}>
-    //                                 {user}
-    //                             </SelectItem>
-    //                         ))}
-    //                     </SelectContent>
-    //                 </Select>
-    //             </div>
 
-    //             <div className="text-center mb-4">
-    //                 <h1 className="text-xl font-semibold">
-    //                     Hi, {selectedName}
-    //                 </h1>
-    //                 <p className="text-gray-600 mt-2">
-    //                     Your two-pointer status for today is:
-    //                 </p>
-    //             </div>
+    return (
+        <div className="p-4">
+            <h1 className="mb-4">
+                You are part of
+                <span className="font-bold underline">
+                    {" "}
+                    {userDetails?.mnk?.mnkName}
+                </span>
+            </h1>
 
-    //             <HabitGrid recordsArray={recordsArray} today={today} />
+            <div className="mb-6">
+                <Select
+                    value={selectedUserId}
+                    onValueChange={(value) => setSelectedUserId(value)}
+                >
+                    <SelectTrigger className="w-full bg-white rounded-lg py-3 px-4 text-left text-gray-600 flex justify-between items-center shadow-xl h-12">
+                        <SelectValue placeholder="Select a user" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                        {mnkUsers.map((user) => (
+                            <SelectItem key={user.userId} value={user.userId}>
+                                {user.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
 
-    //             <div className="mt-10">
-    //                 <h2>Weekly Score card : 1 - 7 </h2>
-    //                 <div>
-    //                     <h2>Level 1 : Check/ uncheck </h2>
-    //                     <p>Reflection Score : </p>
-    //                     <p>Gateway Score : </p>
-    //                 </div>
-    //                 <div>
-    //                     <h2>Level 2 : Check / Uncheck </h2>
-    //                     <p> Cue Rate : </p>
-    //                     <p>Plus Score : </p>
-    //                 </div>
-    //                 <div>
-    //                     <h2>Level 3 : Check / Uncheck</h2>
-    //                     <p>Frequent connection with commrade pair </p>
-    //                     <p> Constantly Updating your plus statement </p>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     </>
-    // );
+            {selectedUserId && recordsArray.length > 0 && (
+                <div>
+                    <HabitGrid recordsArray={recordsArray} today={today} />
+                </div>
+            )}
+            <div className="mt-10">
+                <h2>Weekly Score card : 1 - 7 </h2>
+                <div>
+                    <h2>Level 1 : Check/ uncheck </h2>
+                    <p>Reflection Score : </p>
+                    <p>Gateway Score : </p>
+                </div>
+                <div>
+                    <h2>Level 2 : Check / Uncheck </h2>
+                    <p> Cue Rate : </p>
+                    <p>Plus Score : </p>
+                </div>
+                <div>
+                    <h2>Level 3 : Check / Uncheck</h2>
+                    <p>Frequent connection with commrade pair </p>
+                    <p> Constantly Updating your plus statement </p>
+                </div>
+            </div>
+        </div>
+    );
 }
