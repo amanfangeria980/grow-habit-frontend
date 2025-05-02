@@ -94,36 +94,6 @@ export default function UserHome() {
         }
     }, [selectedUserId]);
 
-    // Add new useEffect to update selectedName when user data changes
-    // useEffect(() => {
-    //     if (user?.name) {
-    //         setSelectedName(user.name.split(" ")[0].toLowerCase());
-    //     }
-    // }, [user?.name]);
-
-    // console.log("user : ", user);
-    // const router = useRouter();
-
-    // useEffect(() => {
-    //     const fetchUserData = async () => {
-    //         try {
-    //             const response = await fetch(
-    //                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/user-graph/${selectedName}`
-    //             );
-    //             const data = await response.json();
-    //             if (data.success) {
-    //                 setRecordsArray(data.data);
-    //             }
-    //         } catch (error) {
-    //             console.error("Error fetching user data:", error);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
-
-    //     fetchUserData();
-    // }, [selectedName]);
-
     if (loading) {
         return <LoadingComponent />;
     }
