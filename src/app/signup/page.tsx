@@ -70,7 +70,9 @@ export default function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
     const onSubmit = async (data: RegisterFormData) => {
         try {
-            const response = await registerUser(data);
+
+            const newData = {...data, mnk : null}
+            const response = await registerUser(newData);
             if (response.success) {
                 toast.success(response.message, {
                     description: "You can now log in to your account",
