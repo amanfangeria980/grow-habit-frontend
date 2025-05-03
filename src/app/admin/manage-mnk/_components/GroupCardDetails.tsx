@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MNKJoinRequests } from "./MNKJoinRequests";
 
 interface GroupCardDetailsProps {
     openMNKDetails: any;
@@ -119,7 +120,7 @@ export function GroupCardDetails({
                                 Total: {users?.length || 0}
                             </span>
                         </div>
-                        <div className="max-h-[60vh] overflow-y-auto pr-2">
+                        <div className="max-h-[40vh] overflow-y-auto pr-2">
                             {users && users.length > 0 ? (
                                 <div className="space-y-2">
                                     {users.map((user: any) => (
@@ -157,6 +158,12 @@ export function GroupCardDetails({
                     </div>
                 </CardContent>
             </Card>
+
+            {/* Join Requests Section */}
+            <MNKJoinRequests
+                mnkId={openMNKDetails.id}
+                mnkName={openMNKDetails.name}
+            />
         </div>
     );
 }
