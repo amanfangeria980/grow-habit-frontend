@@ -1,17 +1,26 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
 
 const NavHeader = () => {
     const router = useRouter();
+    const pathname = usePathname();
     const queryClient = useQueryClient();
+
+    const getButtonClasses = (path: string) => {
+        const isActive = pathname === path;
+        return isActive
+            ? "border-2 border-orange-400 text-orange-500 px-4 py-2 rounded-lg transition-colors duration-200"
+            : "bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors duration-200";
+    };
+
     return (
         <div className="flex justify-between items-center p-4 bg-white">
             <button
-                className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                className={getButtonClasses("/user-home")}
                 onClick={() => {
                     router.push("/user-home");
                 }}
@@ -19,7 +28,7 @@ const NavHeader = () => {
                 All Stats
             </button>
             <button
-                className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                className={getButtonClasses("/user-home/me")}
                 onClick={() => {
                     router.push("/user-home/me");
                 }}
@@ -27,7 +36,7 @@ const NavHeader = () => {
                 My Stats
             </button>
             <button
-                className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                className={getButtonClasses("/reflection-form")}
                 onClick={() => {
                     router.push("/reflection-form");
                 }}
