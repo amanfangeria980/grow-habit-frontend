@@ -91,19 +91,18 @@ const ReflectionForm = () => {
                         testMonth: new Date().getMonth() + 1,
                         testYear: new Date().getFullYear(),
                         deletedAt: null,
-                        name : user?.name,
-                      
+                        name: user?.name,
                     }),
                 }
             );
             const repData = await response.json();
-            console.log("This is the data from the backend ", repData)
+            console.log("This is the data from the backend ", repData);
 
             if (repData.success) {
                 toast.success("Form submitted successfully!", {
                     description: "Your reflection has been saved.",
                 });
-                // router.push("/user-home/me");
+                router.push("/user-home/me");
             } else {
                 toast.error("Submission failed", {
                     description:
