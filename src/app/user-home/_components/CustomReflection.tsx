@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function CustomReflection({ userId }: { userId: string }) {
   const [customNumber, setCustomNumber] = useState({
@@ -8,6 +8,8 @@ export function CustomReflection({ userId }: { userId: string }) {
     value: 0,
     unit: "",
   });
+
+  const [userDetails, setUserDetails] = useState<any>({});
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,13 +26,47 @@ export function CustomReflection({ userId }: { userId: string }) {
         }
       );
 
-      
       const data = await response.json();
       console.log("value of the response is", data);
     } catch (error) {
       console.error("Error adding custom value:", error);
     }
   };
+
+  const handleDelete = async () => {
+    console.log("the user details are", userDetails);
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/delete-custom-value`, {
+        method : "DELETE",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify({userId, customId : userDetails.secondaryHabit[0]})
+    })
+
+    const data = await response.json();
+    console.log("value of the response is", data);
+  };
+
+  useEffect(() => {
+    const getUserDetails = async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-user-details/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+      setUserDetails(data.data);
+      console.log("the user details are", data.data);
+    };
+
+    getUserDetails();
+  }, []);
 
   return (
     <div>
@@ -76,6 +112,9 @@ export function CustomReflection({ userId }: { userId: string }) {
           <Button type="submit">Add a custom number</Button>
         </div>
       </form>
+      <Button onClick={handleDelete} className="my-2">
+        Delete the custom number
+      </Button>
     </div>
   );
 }
