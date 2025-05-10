@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import "@/styles/animations.css";
 import { Card } from "@/components/ui/card";
 import { HabitGrid } from "../_components/HabitGrid";
+import { CustomReflection } from "../_components/CustomReflection";
 
 async function UserHomePage() {
     const auth = await getSession();
@@ -79,6 +80,9 @@ async function UserHomePage() {
             </div>
 
             <HabitGrid recordsArray={recordsArray} today={today} />
+            <div className="my-2">
+            <CustomReflection userId={userId || ""} />
+            </div>
 
             <div className="mt-10">
                 <h2>Weekly Score card : 1 - 7 </h2>
