@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import PlusPlanning from "@/components/PlusPlanning";
 
 export function CustomReflection({ userId }: { userId: string }) {
   const [customNumber, setCustomNumber] = useState({
@@ -9,7 +10,12 @@ export function CustomReflection({ userId }: { userId: string }) {
     unit: "",
   });
 
+
   const [userDetails, setUserDetails] = useState<any>({});
+  const [isSecondaryHabit, setIsSecondaryHabit] = useState<boolean | undefined>(
+    undefined
+  );
+  const [secondaryHabitDetails, setSecondaryHabitDetails] = useState<any>(undefined) ; 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,15 +40,20 @@ export function CustomReflection({ userId }: { userId: string }) {
   };
 
   const handleDelete = async () => {
-    console.log("the user details are", userDetails);
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/delete-custom-value`, {
-        method : "DELETE",
-        headers : {
-            "Content-Type" : "application/json"
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/delete-custom-value`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
         },
-        body : JSON.stringify({userId, customId : userDetails.secondaryHabit[0]})
-    })
+        body: JSON.stringify({
+          userId,
+          customId: userDetails.secondaryHabit[0],
+        }),
+      }
+    );
 
     const data = await response.json();
     console.log("value of the response is", data);
@@ -62,59 +73,99 @@ export function CustomReflection({ userId }: { userId: string }) {
 
       const data = await response.json();
       setUserDetails(data.data);
+      let detailsUser = data.data;
+      if (detailsUser.secondaryHabit.length > 0) {
+        setIsSecondaryHabit(true);
+      } else {
+        setIsSecondaryHabit(false);
+      }
       console.log("the user details are", data.data);
     };
 
     getUserDetails();
   }, []);
 
+
+  useEffect(()=>{
+    if(isSecondaryHabit && userDetails?.secondaryHabit[0]){
+
+      const fetchSecondaryHabit = async()=>{
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/custom-value/${userDetails?.secondaryHabit[0]}`
+        );
+
+
+        const repData = await response.json() ; 
+        setSecondaryHabitDetails(repData.data?.secondaryHabit) ; 
+      }
+
+      fetchSecondaryHabit() ; 
+
+    }
+  },[isSecondaryHabit, userDetails])
+
   return (
     <div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit(e);
-          // Handle form submission here
-        }}
-      >
-        <div className="flex flex-col gap-4">
-          <input
-            type="text"
-            placeholder="Add custom value name"
-            value={customNumber.name}
-            onChange={(e) =>
-              setCustomNumber({ ...customNumber, name: e.target.value })
-            }
-            className="p-2 border rounded"
-          />
-          <input
-            type="number"
-            placeholder="Add initial value"
-            value={customNumber.value}
-            onChange={(e) =>
-              setCustomNumber({
-                ...customNumber,
-                value: e.target.value === "" ? 0 : parseInt(e.target.value),
-              })
-            }
-            className="p-2 border rounded"
-          />
-          <input
-            type="text"
-            placeholder="Add the unit"
-            value={customNumber.unit}
-            onChange={(e) =>
-              setCustomNumber({ ...customNumber, unit: e.target.value })
-            }
-            className="p-2 border rounded"
-          />
 
-          <Button type="submit">Add a custom number</Button>
+      <h2 className="text-lg text-bold underline">Secondary Habit Details</h2>
+      {!isSecondaryHabit && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(e);
+            // Handle form submission here
+          }}
+        >
+          <div className="flex flex-col gap-4">
+            <input
+              type="text"
+              placeholder="Add custom value name"
+              value={customNumber.name}
+              onChange={(e) =>
+                setCustomNumber({ ...customNumber, name: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="number"
+              placeholder="Add initial value"
+              value={customNumber.value}
+              onChange={(e) =>
+                setCustomNumber({
+                  ...customNumber,
+                  value: e.target.value === "" ? 0 : parseInt(e.target.value),
+                })
+              }
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Add the unit"
+              value={customNumber.unit}
+              onChange={(e) =>
+                setCustomNumber({ ...customNumber, unit: e.target.value })
+              }
+              className="p-2 border rounded"
+            />
+
+            <Button type="submit">Add a custom number</Button>
+          </div>
+        </form>
+      )}
+
+      {isSecondaryHabit && (
+        <div>
+         <h2 className="text-semibold text-lg">{secondaryHabitDetails?.name}</h2>
         </div>
-      </form>
+      )}
+
       <Button onClick={handleDelete} className="my-2">
         Delete the custom number
       </Button>
+      
+      <PlusPlanning/>
+
     </div>
   );
 }
