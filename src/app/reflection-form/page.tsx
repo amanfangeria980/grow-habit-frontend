@@ -403,9 +403,6 @@ const ReflectionForm = () => {
           )}
         </div>
         {/* buttons */}
-        <div>
-          {JSON.stringify(secondaryHabitDetails)}
-        </div>
 
         <div className="flex gap-4 mt-8 mb-4">
           <Button
