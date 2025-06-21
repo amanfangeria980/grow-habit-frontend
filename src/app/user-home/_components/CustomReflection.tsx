@@ -30,7 +30,7 @@ export function CustomReflection({ userId }: { userId: string }) {
           },
           body: JSON.stringify({ 
             userId, 
-            ideal: Object.fromEntries([...Array(25)].map((_, i) => [i + 1, 0])),
+            ideal: Object.fromEntries([...Array(25)].map((_, i) => [i, 0])),
             ...customNumber 
           }),
         }

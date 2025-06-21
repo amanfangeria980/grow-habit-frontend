@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 interface EditCustomReflectionProps {
   secondaryHabitDetails: any;
@@ -14,13 +15,12 @@ export default function EditCustomReflection({
   secondarHabitReflection,
   setSecondaryHabitReflection,
 }: EditCustomReflectionProps) {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingIdeal, setIsEditingIdeal] = useState(false);
+  const [isEditingReal, setIsEditingReal] = useState(false);
   const [idealValue, setIdealValue] = useState<string[]>([]);
   const [actualValue, setActualValue] = useState<Record<number, string>>({});
 
   useEffect(() => {
-
-
     if (secondaryHabitDetails?.ideal) {
       const idealValues = Object.values(secondaryHabitDetails?.ideal).map(
         String
@@ -59,13 +59,33 @@ export default function EditCustomReflection({
     }));
   };
 
-  const handleSave = ()=> { 
+  const handleSave = async () => {
 
-    setIsEditing(false);
+    try{
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/update-ideal-value`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          secondaryHabitId: secondaryHabitDetails.id,
+          idealValue: idealValue,
+        }),
+      }
+    );
+    const repData = await response.json();
+    console.log("the reponse on handleSave ", repData);
+  } catch (error) {
+    console.error("Error in handleSave:", error);
+    toast.error("An error occurred while saving. Please try again.");
   }
 
- 
-
+   
+    setIsEditingIdeal(false);
+  };
 
   //   if(secondarHabitReflection){
   //     realValue = Object.values(secondarHabitReflection);
@@ -104,7 +124,7 @@ export default function EditCustomReflection({
           >
             <div className="text-center font-medium text-gray-900">{day}</div>
 
-            {isEditing ? (
+            {isEditingIdeal ? (
               <div>
                 <input
                   type="number"
@@ -119,7 +139,7 @@ export default function EditCustomReflection({
               <div className="text-red-500">{idealValue[index] ?? "-"}</div>
             )}
 
-            {isEditing ? (
+            {isEditingReal ? (
               <div>
                 <input
                   type="number"
@@ -135,12 +155,16 @@ export default function EditCustomReflection({
         ))}
       </div>
 
-      <div className="my-2">
+      <div className="my-2 flex gap-2 ">
         <button
           className="py-1 px-4 bg-orange-500 hover:bg-orange-600 rounded-md text-white"
-          onClick={isEditing ? handleSave : () => setIsEditing(true)}
+          onClick={isEditingIdeal ? handleSave : () => setIsEditingIdeal(true)}
         >
-          {isEditing ? "Save" : "Edit"}
+          {isEditingIdeal ? "Save Ideal" : "Edit Ideal"}
+        </button>
+        <button className="py-1 px-4 bg-orange-500 hover:bg-orange-600 rounded-md text-white">
+          {" "}
+          Edit Real{" "}
         </button>
       </div>
     </div>
