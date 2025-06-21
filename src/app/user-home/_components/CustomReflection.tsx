@@ -28,7 +28,11 @@ export function CustomReflection({ userId }: { userId: string }) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ userId, ...customNumber }),
+          body: JSON.stringify({ 
+            userId, 
+            ideal: Object.fromEntries([...Array(25)].map((_, i) => [i + 1, 0])),
+            ...customNumber 
+          }),
         }
       );
 

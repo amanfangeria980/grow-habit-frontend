@@ -78,9 +78,9 @@ async function UserHomePage() {
       </div>
 
       <HabitGrid recordsArray={recordsArray} today={today} />
-      {/* <div className="my-2">
+      <div className="my-2">
         <CustomReflection userId={userId || ""} />
-      </div> */}
+      </div>
       <div className="my-2">
         <ShowCustomReflection userId={userId || ""} />
       </div>
