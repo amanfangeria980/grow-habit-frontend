@@ -379,7 +379,9 @@ const ReflectionForm = () => {
             )}
           </div>
         )}
+
         {/* fifth question - reflection prompts */}
+
         <div className="bg-gray min-h-36 p-6 rounded-3xl mt-5">
           <h3 className="text-xl text-text-100 mb-6">Reflection Prompts</h3>
           <div className="flex items-center gap-3 mb-4">
